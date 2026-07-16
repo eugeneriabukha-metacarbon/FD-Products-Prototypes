@@ -1,0 +1,3 @@
+[submodule "fd-apps-design-system"]
+	path = fd-apps-design-system
+	url = https://github.com/financedistrict-platform/fd-apps-design-system.git

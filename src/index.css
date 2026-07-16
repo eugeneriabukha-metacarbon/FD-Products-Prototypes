@@ -1,0 +1,11 @@
+/**
+ * App-root CSS wiring — the canonical DS consumption shape:
+ * fonts (@fontsource, via apps-ui) + token layer (apps-tokens), on top of
+ * Tailwind v4. `@source` points Tailwind at the symlinked DS component
+ * sources so the utilities they use are generated in this app's bundle.
+ */
+@import "tailwindcss";
+@import "@financedistrict/apps-ui/fonts.css";
+@import "@financedistrict/apps-tokens/theme.css";
+
+@source "../node_modules/@financedistrict/apps-ui/src";
