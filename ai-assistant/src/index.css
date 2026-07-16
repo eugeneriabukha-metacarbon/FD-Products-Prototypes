@@ -9,3 +9,14 @@
 @import "@financedistrict/apps-tokens/theme.css";
 
 @source "../node_modules/@financedistrict/apps-ui/src";
+
+/**
+ * Launchpad: hovering a card removes the divider directly above it. Written as
+ * plain CSS (unlayered, so it beats the Tailwind `border-*` utility) because
+ * the equivalent arbitrary variant `[&:has(+*:hover)]:border-b-transparent`
+ * is dropped by the production build's class scanner — it works under the dev
+ * server but not in `vite build` (i.e. on Vercel).
+ */
+.launchpad-app-row:has(+ .launchpad-app-row:hover) {
+  border-bottom-color: transparent;
+}

@@ -141,7 +141,7 @@ export function Launchpad({
               {apps.map((app) => (
                 <motion.div
                   key={app.title}
-                  className={`border-card-border border-b last:border-b-0 hover:border-b-transparent [&:has(+*:hover)]:border-b-transparent${
+                  className={`launchpad-app-row border-card-border border-b last:border-b-0 hover:border-b-transparent${
                     app.disabled ? " pointer-events-none" : ""
                   }`}
                   variants={{
