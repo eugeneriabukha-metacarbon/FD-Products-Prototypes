@@ -69,7 +69,7 @@ export function LaunchpadAppCard({
       <button
         type="button"
         onClick={onClick}
-        className={`${className} hover:bg-card-accent focus-visible:outline-focus cursor-pointer outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid`}
+        className={`${className} hover:bg-card-accent hover:rounded-[6px] focus-visible:outline-focus cursor-pointer outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-solid`}
       >
         {inner}
       </button>

@@ -82,7 +82,7 @@ export function Launchpad({
       <LaunchpadHeader onUpgrade={onUpgrade} hasPaidPlan={hasPaidPlan} />
 
       <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto py-16">
-        <div className="flex w-[906px] max-w-full items-start gap-8 px-4">
+        <div className="flex w-[906px] max-w-full items-start gap-12 px-4">
           {/* left column — hero + doc chips */}
           <motion.div
             className="flex w-[437px] max-w-full flex-col gap-8"
@@ -100,7 +100,9 @@ export function Launchpad({
                 Janno
               </h1>
               <p className="body-03 text-primary-foreground-muted">
-                Choose the app you wish to explore or check our documentation:
+                Choose the app you wish to explore or check out
+                <br />
+                our documentation:
               </p>
             </div>
 
@@ -139,7 +141,9 @@ export function Launchpad({
               {apps.map((app) => (
                 <motion.div
                   key={app.title}
-                  className="border-card-border border-b last:border-b-0"
+                  className={`border-card-border border-b last:border-b-0 hover:border-b-transparent [&:has(+*:hover)]:border-b-transparent${
+                    app.disabled ? " pointer-events-none" : ""
+                  }`}
                   variants={{
                     hidden: { opacity: 0, y: 10 },
                     visible: { opacity: 1, y: 0 },

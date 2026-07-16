@@ -139,9 +139,21 @@ export function PlanManagement({
       </section>
 
       {/* cancellation */}
-      <section className="flex items-center justify-between gap-4">
-        <h2 className="display-04 text-primary-foreground">Cancellation</h2>
-        <Button variation="destructive" size="sm" onClick={onCancel}>
+      <section className="flex items-center justify-between gap-8">
+        <div className="flex flex-col gap-1">
+          <h2 className="display-04 text-primary-foreground">Cancellation</h2>
+          <p className="body-03 text-primary-foreground-muted">
+            You'll keep {planName} until the end of your billing period, then
+            move to Free.
+          </p>
+        </div>
+        <Button
+          variation="destructive"
+          size="sm"
+          onClick={onCancel}
+          wrapperClassName="shrink-0"
+          className="whitespace-nowrap"
+        >
           Cancel plan
         </Button>
       </section>

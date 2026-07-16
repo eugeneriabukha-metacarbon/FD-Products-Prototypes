@@ -7,10 +7,9 @@ import {
   EyeIcon,
   EyeSlashIcon,
   LockIcon,
-  PencilSimpleIcon,
+  UserIcon,
   XCircleIcon,
 } from "@phosphor-icons/react";
-import { Tabs } from "@financedistrict/apps-ui/tabs";
 import { Input } from "@financedistrict/apps-ui/input";
 import { Button } from "@financedistrict/apps-ui/button";
 import { Toast } from "@financedistrict/apps-ui/toast";
@@ -92,9 +91,10 @@ function PasswordRules({ value }: { value: string }) {
 }
 
 /**
- * District Pass — the FD identity/account product. Two tabs (Profile info /
- * Change password) built from DS Tabs + Input + Button; saves are simulated
- * and confirmed with a DS Toast. Sibling app of the AI Assistant.
+ * District Pass — the FD identity/account product. A single screen of
+ * FeatureCard rows (Nickname / Email / Password); each expands in place into
+ * an edit form (Edit → Cancel/Save, other rows' Edit disabled while editing).
+ * Saves are simulated and confirmed with a DS Toast. Sibling of the AI Assistant.
  */
 export function DistrictPass({
   onOpenLaunchpad,
@@ -246,226 +246,218 @@ export function DistrictPass({
             </p>
           </div>
 
-          <Tabs.Root defaultValue="profile" className="flex flex-col gap-8">
-            <Tabs.List
-              aria-label="District Pass settings"
-              className="flex w-full border-b border-card-border"
+          <div className="flex flex-col">
+            {/* Nickname — header stays visible; form expands beneath it. */}
+            <form
+              onSubmit={handleSaveProfile}
+              className="border-card-border border-b"
             >
-              <Tabs.Trigger value="profile">Profile</Tabs.Trigger>
-              <Tabs.Trigger value="security">Security</Tabs.Trigger>
-            </Tabs.List>
-
-            <Tabs.Content value="profile">
-              <form
-                className="flex flex-col gap-6"
-                onSubmit={handleSaveProfile}
-              >
-                <Input
-                  label="Nickname"
-                  ref={nicknameRef}
-                  value={editingNickname ? draftNickname : nickname}
-                  readOnly={!editingNickname}
-                  tabIndex={editingNickname ? undefined : -1}
-                  className={
-                    editingNickname ? undefined : "pointer-events-none"
-                  }
-                  onChange={(event) => setDraftNickname(event.target.value)}
-                  rightSlot={
-                    editingNickname ? undefined : (
-                      <button
+              <FeatureCard
+                title="Nickname"
+                subtitle={nickname}
+                caret={false}
+                leading={<UserIcon />}
+                trailing={
+                  editingNickname ? (
+                    <div className="flex gap-2">
+                      <Button
+                        variation="secondary"
+                        size="sm"
                         type="button"
-                        onClick={startEditNickname}
-                        aria-label="Edit nickname"
-                        className="text-input-foreground-muted hover:text-input-foreground focus-visible:outline-focus flex cursor-pointer items-center rounded-xs outline-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
+                        onClick={cancelEditNickname}
                       >
-                        <PencilSimpleIcon size={16} />
-                      </button>
-                    )
-                  }
-                />
-                {editingNickname && (
-                  <div className="flex gap-2">
+                        Cancel
+                      </Button>
+                      <Button variation="primary" size="sm" type="submit">
+                        Save
+                      </Button>
+                    </div>
+                  ) : (
                     <Button
                       variation="secondary"
                       size="sm"
                       type="button"
-                      onClick={cancelEditNickname}
+                      onClick={startEditNickname}
+                      disabled={editingEmail || editingPassword}
                     >
-                      Cancel
+                      Edit
                     </Button>
-                    <Button variation="primary" size="sm" type="submit">
-                      Save
+                  )
+                }
+              />
+              {editingNickname && (
+                <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
+                  <Input
+                    label="Nickname"
+                    ref={nicknameRef}
+                    value={draftNickname}
+                    onChange={(event) => setDraftNickname(event.target.value)}
+                  />
+                </div>
+              )}
+            </form>
+
+            {/* Email — header stays visible; form expands beneath it. */}
+            <form
+              onSubmit={handleSaveEmail}
+              className="border-card-border border-b"
+            >
+              <FeatureCard
+                title="Email"
+                subtitle={email}
+                caret={false}
+                leading={<AtIcon />}
+                trailing={
+                  editingEmail ? (
+                    <div className="flex gap-2">
+                      <Button
+                        variation="secondary"
+                        size="sm"
+                        type="button"
+                        onClick={cancelEditEmail}
+                      >
+                        Cancel
+                      </Button>
+                      <Button variation="primary" size="sm" type="submit">
+                        Save
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variation="secondary"
+                      size="sm"
+                      type="button"
+                      onClick={startEditEmail}
+                      disabled={editingNickname || editingPassword}
+                    >
+                      Edit
                     </Button>
+                  )
+                }
+              />
+              {editingEmail && (
+                <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
+                  <Input
+                    label="New email"
+                    type="email"
+                    value={emailForm.newEmail}
+                    onChange={(event) =>
+                      setEmailForm((prev) => ({
+                        ...prev,
+                        newEmail: event.target.value,
+                      }))
+                    }
+                  />
+                  <Input
+                    label="Confirm new email"
+                    type="email"
+                    value={emailForm.confirmEmail}
+                    onChange={(event) =>
+                      setEmailForm((prev) => ({
+                        ...prev,
+                        confirmEmail: event.target.value,
+                      }))
+                    }
+                  />
+                  <Input
+                    label="Current password"
+                    type={emailPasswordRevealed ? "text" : "password"}
+                    value={emailForm.password}
+                    onChange={(event) =>
+                      setEmailForm((prev) => ({
+                        ...prev,
+                        password: event.target.value,
+                      }))
+                    }
+                    rightSlot={revealButton(emailPasswordRevealed, () =>
+                      setEmailPasswordRevealed((value) => !value),
+                    )}
+                  />
+                </div>
+              )}
+            </form>
+
+            {/* Password — header stays visible; form expands beneath it. */}
+            <form onSubmit={handleSavePassword}>
+              <FeatureCard
+                title="Password"
+                subtitle="••••••••"
+                caret={false}
+                leading={<LockIcon />}
+                trailing={
+                  editingPassword ? (
+                    <div className="flex gap-2">
+                      <Button
+                        variation="secondary"
+                        size="sm"
+                        type="button"
+                        onClick={cancelEditPassword}
+                      >
+                        Cancel
+                      </Button>
+                      <Button variation="primary" size="sm" type="submit">
+                        Save
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variation="secondary"
+                      size="sm"
+                      type="button"
+                      onClick={startEditPassword}
+                      disabled={editingNickname || editingEmail}
+                    >
+                      Edit
+                    </Button>
+                  )
+                }
+              />
+              {editingPassword && (
+                <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
+                  <Input
+                    label="Current password"
+                    type={revealed.current ? "text" : "password"}
+                    value={passwords.current}
+                    onChange={(event) =>
+                      setPasswords((prev) => ({
+                        ...prev,
+                        current: event.target.value,
+                      }))
+                    }
+                    rightSlot={revealToggle("current")}
+                  />
+                  <div className="flex flex-col gap-3">
+                    <Input
+                      label="New password"
+                      type={revealed.new ? "text" : "password"}
+                      value={passwords.new}
+                      onChange={(event) =>
+                        setPasswords((prev) => ({
+                          ...prev,
+                          new: event.target.value,
+                        }))
+                      }
+                      aria-describedby="new-password-rules"
+                      rightSlot={revealToggle("new")}
+                    />
+                    <PasswordRules value={passwords.new} />
                   </div>
-                )}
-              </form>
-            </Tabs.Content>
-
-            <Tabs.Content value="security">
-              <div className="flex flex-col">
-                {/* Email — header stays visible; form expands beneath it. */}
-                <form
-                  onSubmit={handleSaveEmail}
-                  className="border-card-border border-b"
-                >
-                  <FeatureCard
-                    title="Email"
-                    subtitle={email}
-                    caret={false}
-                    leading={<AtIcon />}
-                    trailing={
-                      editingEmail ? (
-                        <div className="flex gap-2">
-                          <Button
-                            variation="secondary"
-                            size="sm"
-                            type="button"
-                            onClick={cancelEditEmail}
-                          >
-                            Cancel
-                          </Button>
-                          <Button variation="primary" size="sm" type="submit">
-                            Save
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button
-                          variation="secondary"
-                          size="sm"
-                          type="button"
-                          onClick={startEditEmail}
-                          disabled={editingPassword}
-                        >
-                          Edit
-                        </Button>
-                      )
+                  <Input
+                    label="Confirm password"
+                    type={revealed.confirm ? "text" : "password"}
+                    value={passwords.confirm}
+                    onChange={(event) =>
+                      setPasswords((prev) => ({
+                        ...prev,
+                        confirm: event.target.value,
+                      }))
                     }
+                    rightSlot={revealToggle("confirm")}
                   />
-                  {editingEmail && (
-                    <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
-                      <Input
-                        label="New email"
-                        type="email"
-                        value={emailForm.newEmail}
-                        onChange={(event) =>
-                          setEmailForm((prev) => ({
-                            ...prev,
-                            newEmail: event.target.value,
-                          }))
-                        }
-                      />
-                      <Input
-                        label="Confirm new email"
-                        type="email"
-                        value={emailForm.confirmEmail}
-                        onChange={(event) =>
-                          setEmailForm((prev) => ({
-                            ...prev,
-                            confirmEmail: event.target.value,
-                          }))
-                        }
-                      />
-                      <Input
-                        label="Current password"
-                        type={emailPasswordRevealed ? "text" : "password"}
-                        value={emailForm.password}
-                        onChange={(event) =>
-                          setEmailForm((prev) => ({
-                            ...prev,
-                            password: event.target.value,
-                          }))
-                        }
-                        rightSlot={revealButton(emailPasswordRevealed, () =>
-                          setEmailPasswordRevealed((value) => !value),
-                        )}
-                      />
-                    </div>
-                  )}
-                </form>
-
-                {/* Password — header stays visible; form expands beneath it. */}
-                <form onSubmit={handleSavePassword}>
-                  <FeatureCard
-                    title="Password"
-                    subtitle="••••••••"
-                    caret={false}
-                    leading={<LockIcon />}
-                    trailing={
-                      editingPassword ? (
-                        <div className="flex gap-2">
-                          <Button
-                            variation="secondary"
-                            size="sm"
-                            type="button"
-                            onClick={cancelEditPassword}
-                          >
-                            Cancel
-                          </Button>
-                          <Button variation="primary" size="sm" type="submit">
-                            Save
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button
-                          variation="secondary"
-                          size="sm"
-                          type="button"
-                          onClick={startEditPassword}
-                          disabled={editingEmail}
-                        >
-                          Edit
-                        </Button>
-                      )
-                    }
-                  />
-                  {editingPassword && (
-                    <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
-                      <Input
-                        label="Current password"
-                        type={revealed.current ? "text" : "password"}
-                        value={passwords.current}
-                        onChange={(event) =>
-                          setPasswords((prev) => ({
-                            ...prev,
-                            current: event.target.value,
-                          }))
-                        }
-                        rightSlot={revealToggle("current")}
-                      />
-                      <div className="flex flex-col gap-3">
-                        <Input
-                          label="New password"
-                          type={revealed.new ? "text" : "password"}
-                          value={passwords.new}
-                          onChange={(event) =>
-                            setPasswords((prev) => ({
-                              ...prev,
-                              new: event.target.value,
-                            }))
-                          }
-                          aria-describedby="new-password-rules"
-                          rightSlot={revealToggle("new")}
-                        />
-                        <PasswordRules value={passwords.new} />
-                      </div>
-                      <Input
-                        label="Confirm password"
-                        type={revealed.confirm ? "text" : "password"}
-                        value={passwords.confirm}
-                        onChange={(event) =>
-                          setPasswords((prev) => ({
-                            ...prev,
-                            confirm: event.target.value,
-                          }))
-                        }
-                        rightSlot={revealToggle("confirm")}
-                      />
-                    </div>
-                  )}
-                </form>
-              </div>
-            </Tabs.Content>
-          </Tabs.Root>
+                </div>
+              )}
+            </form>
+          </div>
         </motion.div>
       </main>
 

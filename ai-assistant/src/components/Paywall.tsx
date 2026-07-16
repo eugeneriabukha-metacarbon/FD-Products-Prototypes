@@ -1,9 +1,10 @@
 import * as React from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeftIcon, CheckIcon, XIcon } from "@phosphor-icons/react";
 import { Button } from "@financedistrict/apps-ui/button";
 import { Dialog } from "@financedistrict/apps-ui/dialog";
 import { Switch } from "@financedistrict/apps-ui/switch";
+import { Toast } from "@financedistrict/apps-ui/toast";
 
 import logoUrl from "../assets/ai-assistant-logo.svg";
 import { PlanManagement } from "./PlanManagement";
@@ -87,6 +88,21 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
   const [cancelOpen, setCancelOpen] = React.useState(false);
   // Paid users land on the management view; "Upgrade plan" opens the plan grid.
   const [view, setView] = React.useState<"manage" | "plans">("manage");
+  const [toast, setToast] = React.useState<string | null>(null);
+  const toastTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  React.useEffect(
+    () => () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    },
+    [],
+  );
+
+  const showToast = (message: string) => {
+    setToast(message);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 3200);
+  };
 
   const currentPlanData = PLANS.find((p) => p.id === currentPlan);
   const onPaidPlan = currentPlan !== "free";
@@ -97,12 +113,20 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
   const handleCancel = () => {
     onChangePlan("free");
     setCancelOpen(false);
+    showToast("Your plan has been cancelled — you're back on the Free plan.");
   };
 
   const handleChangePlan = (plan: PlanId) => {
+    const isUpgrade = PLAN_RANK[plan] > PLAN_RANK[currentPlan];
+    const name = PLANS.find((p) => p.id === plan)?.name ?? plan;
     onChangePlan(plan);
     // Returning to a paid plan drops back to the management view.
     if (plan !== "free") setView("manage");
+    showToast(
+      isUpgrade
+        ? `You've upgraded to the ${name} plan.`
+        : `You've switched to the ${name} plan.`,
+    );
   };
 
   return (
@@ -165,197 +189,206 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
         />
       ) : (
         <>
-      {/* page header: title + billing switcher */}
-      <section className="flex w-full flex-col items-center gap-6 pt-16 pb-8">
-        <div className="flex w-[438px] max-w-full flex-col items-center gap-2 text-center">
-          <h1 className="display-03 text-primary-foreground w-full">
-            {onPaidPlan
-              ? `You're on the ${currentPlanName} plan`
-              : "Select the plan that works best for you"}
-          </h1>
-          <p className="body-03 text-primary-foreground-muted w-full">
-            {onPaidPlan
-              ? "Change tiers anytime, or cancel to return to the Free plan."
-              : "Unlock unlimited AI conversations, advanced models, and agent automation."}
-          </p>
-        </div>
+          {/* page header: title + billing switcher */}
+          <section className="flex w-full flex-col items-center gap-6 pt-16 pb-8">
+            <div className="flex w-[438px] max-w-full flex-col items-center gap-2 text-center">
+              <h1 className="display-03 text-primary-foreground w-full">
+                {onPaidPlan
+                  ? `You're on the ${currentPlanName} plan`
+                  : "Select the plan that works best for you"}
+              </h1>
+              <p className="body-03 text-primary-foreground-muted w-full">
+                {onPaidPlan
+                  ? "Change tiers anytime, or cancel to return to the Free plan."
+                  : "Unlock unlimited AI conversations, advanced models, and agent automation."}
+              </p>
+            </div>
 
-        <div className="flex items-center justify-center gap-2">
-          <span
-            className={`${yearly ? "body-03 text-foreground-muted" : "body-03-medium text-foreground-accent"} w-[120px] text-right`}
-          >
-            Monthly
-          </span>
-          <Switch
-            checked={yearly}
-            onCheckedChange={setYearly}
-            aria-label="Bill yearly"
-          />
-          <span
-            className={`${yearly ? "body-03-medium text-foreground-accent" : "body-03 text-foreground-muted"} w-[120px]`}
-          >
-            Yearly
-          </span>
-        </div>
-      </section>
-
-      {/* plans */}
-      <section className="flex w-full flex-col items-center pb-16">
-        <div className="flex w-[906px] max-w-full items-stretch justify-center gap-4 px-4">
-          {/* Free (upgrade) flow shows all three incl. the current Free card;
-              a paid "change plan" flow shows only the plans you can switch TO. */}
-          {(onPaidPlan
-            ? PLANS.filter((plan) => plan.id !== currentPlan)
-            : PLANS
-          ).map((plan, index) => {
-            const isCurrent = plan.id === currentPlan;
-            const neutral = !plan.brand;
-            return (
-              <motion.div
-                key={plan.id}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.4,
-                  ease: "easeOut",
-                  delay: 0.06 + index * 0.08,
-                }}
-                className={`${
-                  neutral ? "border-card-border" : "border-card-brand-border"
-                } rounded-md flex min-w-px flex-1 flex-col overflow-clip border`}
+            <div className="flex items-center justify-center gap-2">
+              <span
+                className={`${yearly ? "body-03 text-foreground-muted" : "body-03-medium text-foreground-accent"} w-[120px] text-right`}
               >
-                {/* card header */}
-                <div
-                  className={`${
-                    neutral
-                      ? "bg-card-background border-card-border"
-                      : "bg-card-brand-background border-card-brand-border"
-                  } flex h-[216px] w-full flex-col gap-6 border-b p-6`}
-                >
-                  <div className="flex w-full flex-col gap-2">
-                    <div className="flex w-full items-center justify-between">
-                      <p
-                        className={`${
-                          neutral ? "text-card-foreground" : "text-card-brand-foreground"
-                        } body-02-medium`}
-                      >
-                        {plan.name}
-                      </p>
-                      {!isCurrent && plan.popular && (
-                        <span className="bg-brand-primary-background text-brand-primary-foreground rounded-full body-04 px-1.5 py-0.5">
-                          Popular
-                        </span>
-                      )}
-                    </div>
+                Monthly
+              </span>
+              <Switch
+                checked={yearly}
+                onCheckedChange={setYearly}
+                aria-label="Bill yearly"
+              />
+              <span
+                className={`${yearly ? "body-03-medium text-foreground-accent" : "body-03 text-foreground-muted"} w-[120px]`}
+              >
+                Yearly
+              </span>
+            </div>
+          </section>
+
+          {/* plans */}
+          <section className="flex w-full flex-col items-center pb-16">
+            <div className="flex w-[906px] max-w-full items-stretch justify-center gap-4 px-4">
+              {/* Free (upgrade) flow shows all three incl. the current Free card;
+              a paid "change plan" flow shows only the plans you can switch TO. */}
+              {(onPaidPlan
+                ? PLANS.filter((plan) => plan.id !== currentPlan)
+                : PLANS
+              ).map((plan, index) => {
+                const isCurrent = plan.id === currentPlan;
+                const neutral = !plan.brand;
+                return (
+                  <motion.div
+                    key={plan.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.4,
+                      ease: "easeOut",
+                      delay: 0.06 + index * 0.08,
+                    }}
+                    className={`${
+                      neutral
+                        ? "border-card-border"
+                        : "border-card-brand-border"
+                    } rounded-md flex min-w-px flex-1 flex-col overflow-clip border`}
+                  >
+                    {/* card header */}
                     <div
                       className={`${
-                        plan.id === "free"
-                          ? "text-card-foreground-muted"
-                          : neutral
-                            ? "text-card-foreground"
-                            : "text-card-brand-foreground"
-                      } flex w-full items-baseline gap-1 whitespace-nowrap`}
+                        neutral
+                          ? "bg-card-background border-card-border"
+                          : "bg-card-brand-background border-card-brand-border"
+                      } flex h-[216px] w-full flex-col gap-6 border-b p-6`}
                     >
-                      <span
-                        className="display-01"
-                        style={{ fontVariationSettings: '"wdth" 110' }}
-                      >
-                        {yearly ? plan.priceYearly : plan.priceMonthly}
-                      </span>
-                      <span
-                        className={`${
-                          neutral
-                            ? "text-card-foreground-muted"
-                            : "text-card-brand-foreground-muted"
-                        } body-03`}
-                      >
-                        USD / {yearly ? "year" : "month"}
-                      </span>
+                      <div className="flex w-full flex-col gap-2">
+                        <div className="flex w-full items-center justify-between">
+                          <p
+                            className={`${
+                              neutral
+                                ? "text-card-foreground"
+                                : "text-card-brand-foreground"
+                            } body-02-medium`}
+                          >
+                            {plan.name}
+                          </p>
+                          {!isCurrent && plan.popular && (
+                            <span className="bg-brand-primary-background text-brand-primary-foreground rounded-full body-04 px-1.5 py-0.5">
+                              Popular
+                            </span>
+                          )}
+                        </div>
+                        <div
+                          className={`${
+                            plan.id === "free"
+                              ? "text-card-foreground-muted"
+                              : neutral
+                                ? "text-card-foreground"
+                                : "text-card-brand-foreground"
+                          } flex w-full items-baseline gap-1 whitespace-nowrap`}
+                        >
+                          <span
+                            className="display-01"
+                            style={{ fontVariationSettings: '"wdth" 110' }}
+                          >
+                            {yearly ? plan.priceYearly : plan.priceMonthly}
+                          </span>
+                          <span
+                            className={`${
+                              neutral
+                                ? "text-card-foreground-muted"
+                                : "text-card-brand-foreground-muted"
+                            } body-03`}
+                          >
+                            USD / {yearly ? "year" : "month"}
+                          </span>
+                        </div>
+                        <p
+                          className={`${
+                            neutral
+                              ? "text-card-foreground-muted"
+                              : "text-card-brand-foreground-muted"
+                          } body-03 w-full`}
+                        >
+                          {plan.description}
+                        </p>
+                      </div>
+
+                      {isCurrent ? (
+                        <Button
+                          variation="primary"
+                          size="md"
+                          disabled
+                          wrapperClassName="w-full"
+                          className="w-full"
+                        >
+                          Your current plan
+                        </Button>
+                      ) : plan.id === "free" ? (
+                        // From a paid plan, moving to Free ends the subscription —
+                        // routed through the same cancel confirmation.
+                        <Button
+                          variation="secondary"
+                          size="md"
+                          wrapperClassName="w-full"
+                          className="w-full"
+                          onClick={() => setCancelOpen(true)}
+                        >
+                          Change to Free
+                        </Button>
+                      ) : (
+                        <Button
+                          variation={plan.brand ? "brand" : "primary"}
+                          size="md"
+                          wrapperClassName="w-full"
+                          className="w-full"
+                          onClick={() => handleChangePlan(plan.id)}
+                        >
+                          {PLAN_RANK[plan.id] > PLAN_RANK[currentPlan]
+                            ? `Upgrade to ${plan.name}`
+                            : `Switch to ${plan.name}`}
+                        </Button>
+                      )}
                     </div>
-                    <p
+
+                    {/* card footer: feature list */}
+                    <div
                       className={`${
                         neutral
-                          ? "text-card-foreground-muted"
-                          : "text-card-brand-foreground-muted"
-                      } body-03 w-full`}
+                          ? "bg-card-background"
+                          : "bg-card-brand-background"
+                      } flex w-full flex-1 flex-col gap-6 p-6`}
                     >
-                      {plan.description}
-                    </p>
-                  </div>
-
-                  {isCurrent ? (
-                    <Button
-                      variation="primary"
-                      size="md"
-                      disabled
-                      wrapperClassName="w-full"
-                      className="w-full"
-                    >
-                      Your current plan
-                    </Button>
-                  ) : plan.id === "free" ? (
-                    // From a paid plan, moving to Free ends the subscription —
-                    // routed through the same cancel confirmation.
-                    <Button
-                      variation="secondary"
-                      size="md"
-                      wrapperClassName="w-full"
-                      className="w-full"
-                      onClick={() => setCancelOpen(true)}
-                    >
-                      Change to Free
-                    </Button>
-                  ) : (
-                    <Button
-                      variation={plan.brand ? "brand" : "primary"}
-                      size="md"
-                      wrapperClassName="w-full"
-                      className="w-full"
-                      onClick={() => handleChangePlan(plan.id)}
-                    >
-                      {PLAN_RANK[plan.id] > PLAN_RANK[currentPlan]
-                        ? `Upgrade to ${plan.name}`
-                        : `Switch to ${plan.name}`}
-                    </Button>
-                  )}
-                </div>
-
-                {/* card footer: feature list */}
-                <div
-                  className={`${
-                    neutral ? "bg-card-background" : "bg-card-brand-background"
-                  } flex w-full flex-1 flex-col gap-6 p-6`}
-                >
-                  <ul className="flex w-full flex-col gap-2">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex w-full items-center gap-1">
-                        <CheckIcon
-                          size={16}
-                          className={`${
-                            neutral
-                              ? "text-card-foreground"
-                              : "text-card-brand-foreground-muted"
-                          } shrink-0`}
-                          aria-hidden="true"
-                        />
-                        <span
-                          className={`${
-                            neutral
-                              ? "text-card-foreground"
-                              : "text-card-brand-foreground-muted"
-                          } body-03 whitespace-nowrap`}
-                        >
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
+                      <ul className="flex w-full flex-col gap-2">
+                        {plan.features.map((feature) => (
+                          <li
+                            key={feature}
+                            className="flex w-full items-center gap-1"
+                          >
+                            <CheckIcon
+                              size={16}
+                              className={`${
+                                neutral
+                                  ? "text-card-foreground"
+                                  : "text-card-brand-foreground-muted"
+                              } shrink-0`}
+                              aria-hidden="true"
+                            />
+                            <span
+                              className={`${
+                                neutral
+                                  ? "text-card-foreground"
+                                  : "text-card-brand-foreground-muted"
+                              } body-03 whitespace-nowrap`}
+                            >
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </section>
         </>
       )}
 
@@ -377,6 +410,25 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog.Root>
+
+      {/* Plan-change confirmation — presentational DS Toast, auto-dismissed. */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4">
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="pointer-events-auto"
+            >
+              <Toast variation="success" onClose={() => setToast(null)}>
+                {toast}
+              </Toast>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
