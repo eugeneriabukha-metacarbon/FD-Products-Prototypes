@@ -1,0 +1,88 @@
+{
+  "name": "@financedistrict/apps-ui",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared base-component library (Button, Input, Modal, DataTable, ...) — React + Tailwind v4, styled from @financedistrict/apps-tokens.",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/financedistrict-platform/fd-apps-design-system.git",
+    "directory": "packages/components"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "type": "module",
+  "exports": {
+    "./fonts.css": "./src/fonts.css",
+    "./accordion": "./src/accordion/index.ts",
+    "./button": "./src/button/index.ts",
+    "./checkbox": "./src/checkbox/index.ts",
+    "./dialog": "./src/dialog/index.ts",
+    "./feature-card": "./src/feature-card/index.ts",
+    "./filter": "./src/filter/index.ts",
+    "./inline-select": "./src/inline-select/index.ts",
+    "./input": "./src/input/index.ts",
+    "./panel": "./src/panel/index.ts",
+    "./property-grid": "./src/property-grid/index.ts",
+    "./radio": "./src/radio/index.ts",
+    "./search-bar": "./src/search-bar/index.ts",
+    "./select": "./src/select/index.ts",
+    "./selectable-feature-card": "./src/selectable-feature-card/index.ts",
+    "./switch": "./src/switch/index.ts",
+    "./table-cell": "./src/table-cell/index.ts",
+    "./tabs": "./src/tabs/index.ts",
+    "./toast": "./src/toast/index.ts",
+    "./token-input": "./src/token-input/index.ts",
+    "./tooltip": "./src/tooltip/index.ts",
+    "./cut-corner": "./src/lib/cut-corner.ts",
+    "./scrollbar": "./src/lib/scrollbar.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "storybook": "storybook dev -p ${PORT:-6006}",
+    "storybook:build": "storybook build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@financedistrict/apps-icons": "*",
+    "@financedistrict/apps-tokens": "*",
+    "@fontsource-variable/archivo": "^5.2.8",
+    "@fontsource/chakra-petch": "^5.2.7",
+    "@phosphor-icons/react": "^2.1.7",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "react-dom": ">=19"
+  },
+  "devDependencies": {
+    "@storybook/addon-designs": "^11.1.3",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/addon-themes": "^10.4.6",
+    "@storybook/nextjs-vite": "^10.4.6",
+    "@tailwindcss/vite": "^4.3.2",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "axe-core": "^4.12.1",
+    "jsdom": "^29.1.1",
+    "next": "^16.2.10",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "storybook": "^10.4.6",
+    "storybook-addon-pseudo-states": "^10.4.6",
+    "tailwindcss": "^4.3.2",
+    "typescript": "^5.7.0",
+    "vite": "^8.1.3",
+    "vitest": "^4.1.9"
+  }
+}

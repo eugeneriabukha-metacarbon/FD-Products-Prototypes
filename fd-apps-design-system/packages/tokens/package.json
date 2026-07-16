@@ -1,0 +1,30 @@
+{
+  "name": "@financedistrict/apps-tokens",
+  "version": "0.0.0",
+  "description": "Framework-neutral design tokens for FD apps. Generated from Figma, consumed as Tailwind v4 CSS.",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/financedistrict-platform/fd-apps-design-system.git",
+    "directory": "packages/tokens"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "files": [
+    "src"
+  ],
+  "exports": {
+    "./base.css": "./src/base.css",
+    "./theme.css": "./src/theme.css"
+  },
+  "scripts": {
+    "verify": "tailwindcss -i verify/input.css -o verify/out.css && node verify/check.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "culori": "^4.0.2",
+    "tailwindcss": "^4.0.0"
+  }
+}

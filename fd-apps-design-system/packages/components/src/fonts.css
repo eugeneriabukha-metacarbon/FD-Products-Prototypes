@@ -1,0 +1,33 @@
+/**
+ * Portable font loading — see ADR-0008.
+ *
+ * This package does not own font *loading*, only the CSS variable *contract*
+ * `@financedistrict/apps-tokens` `theme.css` reads: `--font-archivo` and
+ * `--font-chakra-petch`. This file is one *optional* way to satisfy that contract,
+ * using @fontsource (self-hosted `@font-face` rules, no compiler-specific transform
+ * — works identically under Vite, Next, a UMD build, or plain static HTML with no
+ * build step at all). Any consumer is free to define the same two variables a
+ * different way instead (a Google Fonts <link> tag, next/font/google in a Next app's
+ * own root layout, etc.) — see the standalone-prototype-consumption guide for the
+ * <link>-tag version used by zero-build prototypes.
+ *
+ * Usage (an app that wants this default):
+ *
+ *   @import "@financedistrict/apps-ui/fonts.css";
+ *   @import "@financedistrict/apps-tokens/theme.css";
+ */
+
+/* Archivo — sans/display. Variable font: every weight in one file. */
+@import "@fontsource-variable/archivo";
+
+/* Chakra Petch — mono/caption. Not variable; load the weights actually used. */
+@import "@fontsource/chakra-petch/300.css";
+@import "@fontsource/chakra-petch/400.css";
+@import "@fontsource/chakra-petch/500.css";
+@import "@fontsource/chakra-petch/600.css";
+@import "@fontsource/chakra-petch/700.css";
+
+:root {
+  --font-archivo: "Archivo Variable", sans-serif;
+  --font-chakra-petch: "Chakra Petch", monospace;
+}

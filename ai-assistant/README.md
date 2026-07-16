@@ -1,8 +1,8 @@
 # AI Assistant — Prototype
 
-Vite + React 19 + Tailwind v4. Renders against the FD design system, consumed
-from the shared `fd-apps-design-system/` submodule at the repo root (see the
-[root README](../README.md) for DS / submodule details).
+Vite + React 19 + Tailwind v4. Renders against the FD design system, vendored
+under `fd-apps-design-system/packages/` at the repo root (see the
+[root README](../README.md) for DS details).
 
 The DS components are consumed as **source**, so their runtime deps
 (`clsx`, `class-variance-authority`, `tailwind-merge`, the `@fontsource` fonts)
@@ -12,7 +12,6 @@ Vercel, where the submodule ships no `node_modules`) can't resolve them.
 ## Develop
 
 ```bash
-# from the repo root, with submodules initialised:
 cd ai-assistant
 npm install
 npm run dev        # http://localhost:5173

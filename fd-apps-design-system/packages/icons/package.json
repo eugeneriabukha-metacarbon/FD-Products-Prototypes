@@ -1,0 +1,47 @@
+{
+  "name": "@financedistrict/apps-icons",
+  "version": "0.0.0",
+  "description": "Full-color SVG icon libraries for FD apps (networks & tokens, logos, currencies). Tree-shakeable React components generated from Figma.",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/financedistrict-platform/fd-apps-design-system.git",
+    "directory": "packages/icons"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "exports": {
+    "./networks": "./src/networks/index.ts",
+    "./logos": "./src/logos/index.ts",
+    "./currencies": "./src/currencies/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "react-dom": ">=19"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "axe-core": "^4.12.1",
+    "jsdom": "^29.1.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.9"
+  }
+}

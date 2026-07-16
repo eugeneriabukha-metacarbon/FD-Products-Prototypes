@@ -1,0 +1,668 @@
+/**
+ * Semantic theme tokens + Tailwind v4 registration. Generated from Figma.
+ * Do not edit by hand. Import order: tailwindcss -> this file.
+ */
+@import "./base.css";
+
+:root,
+.light {
+  --card-primary-background: var(--gray-50);
+  --card-brand-primary-background: var(--purple-200);
+  --surface-backdrop: oklch(from var(--gray-950) l c h / 50%);
+  --primary-foreground: var(--black);
+  --primary-foreground-muted: var(--gray-500);
+  --foreground: var(--gray-900);
+  --foreground-muted: var(--gray-500);
+  --border: var(--gray-150);
+  --focus: var(--purple-500);
+  --foreground-accent: var(--gray-950);
+  --card-accent: var(--gray-50);
+  --surface: var(--white);
+  --brand-foreground: var(--purple-950);
+  --border-muted: var(--gray-100);
+  --border-accent: var(--gray-200);
+  --card-primary-accent: var(--gray-100);
+  --effect-01: oklch(from var(--gray-950) l c h / 5%);
+  --warning-foreground: var(--yellow-500);
+  --info-foreground: var(--blue-500);
+  --card-brand-primary-border: var(--purple-300);
+  --card-brand-primary-foreground: var(--purple-950);
+  --input-background: var(--gray-50);
+  --card-brand-background: var(--purple-50);
+  --card-brand-foreground: var(--purple-950);
+  --card-brand-foreground-muted: oklch(from var(--purple-950) l c h / 80%);
+  --card-brand-border: oklch(from var(--purple-950) l c h / 10%);
+  --effect-02: oklch(from var(--gray-950) l c h / 10%);
+  --brand-primary-foreground: var(--purple-950);
+  --fader-01: var(--white);
+  --fader-02: oklch(from var(--white) l c h / 0%);
+  --destructive-primary-foreground: var(--red-600);
+  --info-primary-foreground-background: var(--blue-50);
+  --warning-primary-foreground: var(--yellow-50);
+  --success-primary-foreground: var(--green-500);
+  --data-teal: var(--blue-400);
+  --data-purple: var(--purple-500);
+  --data-magenta: var(--red-300);
+  --data-teal-2: var(--blue-300);
+  --data-purple-2: var(--purple-300);
+  --data-magenta-2: var(--red-200);
+  --card-border: var(--gray-150);
+  --card-foreground: var(--gray-950);
+  --card-foreground-muted: var(--gray-500);
+  --data-indigo: var(--blue-600);
+  --data-indigo-2: var(--blue-400);
+  --brand-primary-background: var(--purple-200);
+  --brand-primary-accent: var(--purple-300);
+  --brand-primary-border: var(--purple-300);
+  --background: var(--gray-50);
+  --card-brand-secondary-foreground: var(--gray-50);
+  --card-brand-secondary-foreground-muted: oklch(from var(--gray-50) l c h / 40%);
+  --brand-background: var(--purple-50);
+  --card-brand-secondary-background: var(--purple-950);
+  --card-background: var(--white);
+  --secondary-foreground: var(--gray-950);
+  --secondary-foreground-muted: var(--gray-300);
+  --secondary-border-accent: var(--gray-200);
+  --secondary-border-muted: var(--gray-100);
+  --secondary-background: var(--white);
+  --secondary-border: var(--gray-150);
+  --destructive-background: var(--red-50);
+  --card-primary-foreground: var(--black);
+  --card-primary-foreground-muted: oklch(from var(--gray-950) l c h / 60%);
+  --card-primary-border: oklch(from var(--gray-950) l c h / 5%);
+  --success-primary-background: var(--green-50);
+  --button-brand-primary-accent: var(--purple-300);
+  --button-brand-primary-foreground: var(--purple-950);
+  --button-brand-primary-background: var(--purple-200);
+  --button-destructive-accent: var(--red-800);
+  --button-destructive-background: var(--red-700);
+  --button-destructive-primary-foreground: var(--white);
+  --button-primary-accent: var(--gray-900);
+  --button-primary-foreground: var(--white);
+  --button-primary-foreground-muted: var(--gray-300);
+  --button-primary-muted: var(--gray-150);
+  --button-primary-background: var(--black);
+  --button-secondary-border-accent: var(--gray-200);
+  --button-secondary-border: var(--gray-150);
+  --button-secondary-border-muted: var(--gray-100);
+  --button-secondary-foreground: var(--gray-950);
+  --button-secondary-foreground-accent: var(--gray-850);
+  --button-secondary-foreground-muted: var(--gray-300);
+  --button-secondary-background: var(--white);
+  --card-brand-secondary-border: oklch(from var(--gray-50) l c h / 10%);
+  --card-brand-accent: var(--purple-50);
+  --card-brand-border-accent: var(--purple-500);
+  --brand-border: var(--purple-800);
+  --input-foreground: var(--gray-500);
+  --input-border: var(--gray-150);
+  --input-border-accent: var(--purple-500);
+  --input-foreground-accent: var(--gray-950);
+  --input-foreground-muted: var(--gray-300);
+  --input-destructive-background: var(--gray-50);
+  --input-destructive-foreground: var(--gray-950);
+  --input-destructive-foreground-accent: var(--red-700);
+  --input-destructive-border: var(--red-700);
+  --overlay: oklch(from var(--gray-950) l c h / 50%);
+  --card-reversed-background: var(--black);
+  --card-reversed-foreground: var(--gray-50);
+  --card-reversed-foreground-muted: var(--gray-600);
+  --brand-accent: var(--purple-500);
+}
+
+.dark {
+  --card-primary-background: var(--gray-950);
+  --card-brand-primary-background: var(--purple-800);
+  --surface-backdrop: oklch(from var(--gray-950) l c h / 50%);
+  --primary-foreground: var(--white);
+  --primary-foreground-muted: var(--gray-400);
+  --foreground: var(--gray-100);
+  --foreground-muted: var(--gray-350);
+  --border: var(--gray-900);
+  --focus: var(--purple-400);
+  --foreground-accent: var(--gray-50);
+  --card-accent: var(--gray-950);
+  --surface: var(--black);
+  --brand-foreground: var(--purple-50);
+  --border-muted: var(--gray-750);
+  --border-accent: var(--gray-600);
+  --card-primary-accent: var(--gray-900);
+  --effect-01: oklch(from var(--gray-950) l c h / 50%);
+  --warning-foreground: var(--yellow-500);
+  --info-foreground: var(--blue-500);
+  --card-brand-primary-border: var(--purple-600);
+  --card-brand-primary-foreground: var(--purple-50);
+  --input-background: var(--gray-950);
+  --card-brand-background: var(--purple-950);
+  --card-brand-foreground: var(--purple-50);
+  --card-brand-foreground-muted: var(--purple-50);
+  --card-brand-border: oklch(from var(--gray-50) l c h / 10%);
+  --effect-02: oklch(from var(--gray-950) l c h / 80%);
+  --brand-primary-foreground: var(--purple-50);
+  --fader-01: var(--black);
+  --fader-02: oklch(from var(--gray-950) l c h / 0%);
+  --destructive-primary-foreground: var(--red-700);
+  --info-primary-foreground-background: var(--blue-950);
+  --warning-primary-foreground: var(--yellow-950);
+  --success-primary-foreground: var(--green-500);
+  --data-teal: var(--blue-200);
+  --data-purple: var(--purple-400);
+  --data-magenta: var(--red-400);
+  --data-teal-2: var(--blue-600);
+  --data-purple-2: var(--purple-600);
+  --data-magenta-2: var(--red-500);
+  --card-border: var(--gray-900);
+  --card-foreground: var(--gray-50);
+  --card-foreground-muted: var(--gray-400);
+  --data-indigo: var(--blue-300);
+  --data-indigo-2: var(--blue-700);
+  --brand-primary-background: var(--purple-900);
+  --brand-primary-accent: var(--purple-800);
+  --brand-primary-border: var(--purple-700);
+  --background: var(--gray-950);
+  --card-brand-secondary-foreground: var(--purple-950);
+  --card-brand-secondary-foreground-muted: oklch(from var(--purple-950) l c h / 40%);
+  --brand-background: var(--purple-950);
+  --card-brand-secondary-background: var(--purple-250);
+  --card-background: var(--black);
+  --secondary-foreground: var(--gray-50);
+  --secondary-foreground-muted: var(--gray-500);
+  --secondary-border-accent: var(--gray-850);
+  --secondary-border-muted: var(--gray-900);
+  --secondary-background: var(--black);
+  --secondary-border: var(--gray-850);
+  --destructive-background: var(--red-900);
+  --card-primary-foreground: var(--white);
+  --card-primary-foreground-muted: oklch(from var(--gray-50) l c h / 60%);
+  --card-primary-border: oklch(from var(--gray-50) l c h / 5%);
+  --success-primary-background: var(--green-900);
+  --button-brand-primary-accent: var(--purple-400);
+  --button-brand-primary-foreground: var(--purple-300);
+  --button-brand-primary-background: var(--purple-500);
+  --button-destructive-accent: var(--red-600);
+  --button-destructive-background: var(--red-700);
+  --button-destructive-primary-foreground: var(--white);
+  --button-primary-accent: var(--gray-100);
+  --button-primary-foreground: var(--black);
+  --button-primary-foreground-muted: var(--gray-400);
+  --button-primary-muted: var(--gray-850);
+  --button-primary-background: var(--white);
+  --button-secondary-border-accent: var(--gray-850);
+  --button-secondary-border: var(--gray-900);
+  --button-secondary-border-muted: var(--gray-900);
+  --button-secondary-foreground: var(--gray-50);
+  --button-secondary-foreground-accent: var(--gray-150);
+  --button-secondary-foreground-muted: var(--gray-400);
+  --button-secondary-background: var(--black);
+  --card-brand-secondary-border: oklch(from var(--purple-950) l c h / 10%);
+  --card-brand-accent: var(--purple-950);
+  --card-brand-border-accent: var(--purple-500);
+  --brand-border: var(--purple-500);
+  --input-foreground: var(--gray-400);
+  --input-border: var(--gray-900);
+  --input-border-accent: var(--purple-500);
+  --input-foreground-accent: var(--gray-50);
+  --input-foreground-muted: var(--gray-600);
+  --input-destructive-background: var(--gray-950);
+  --input-destructive-foreground: var(--gray-50);
+  --input-destructive-foreground-accent: var(--red-500);
+  --input-destructive-border: var(--red-500);
+  --overlay: oklch(from var(--gray-950) l c h / 80%);
+  --card-reversed-background: var(--gray-900);
+  --card-reversed-foreground: var(--gray-50);
+  --card-reversed-foreground-muted: var(--gray-600);
+  --brand-accent: var(--purple-500);
+}
+
+/* Register semantic colors as Tailwind utilities (theme-switch aware) */
+@theme inline {
+  --color-card-primary-background: var(--card-primary-background);
+  --color-card-brand-primary-background: var(--card-brand-primary-background);
+  --color-surface-backdrop: var(--surface-backdrop);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-foreground-muted: var(--primary-foreground-muted);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-focus: var(--focus);
+  --color-foreground-accent: var(--foreground-accent);
+  --color-card-accent: var(--card-accent);
+  --color-surface: var(--surface);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-border-muted: var(--border-muted);
+  --color-border-accent: var(--border-accent);
+  --color-card-primary-accent: var(--card-primary-accent);
+  --color-effect-01: var(--effect-01);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info-foreground: var(--info-foreground);
+  --color-card-brand-primary-border: var(--card-brand-primary-border);
+  --color-card-brand-primary-foreground: var(--card-brand-primary-foreground);
+  --color-input-background: var(--input-background);
+  --color-card-brand-background: var(--card-brand-background);
+  --color-card-brand-foreground: var(--card-brand-foreground);
+  --color-card-brand-foreground-muted: var(--card-brand-foreground-muted);
+  --color-card-brand-border: var(--card-brand-border);
+  --color-effect-02: var(--effect-02);
+  --color-brand-primary-foreground: var(--brand-primary-foreground);
+  --color-fader-01: var(--fader-01);
+  --color-fader-02: var(--fader-02);
+  --color-destructive-primary-foreground: var(--destructive-primary-foreground);
+  --color-info-primary-foreground-background: var(--info-primary-foreground-background);
+  --color-warning-primary-foreground: var(--warning-primary-foreground);
+  --color-success-primary-foreground: var(--success-primary-foreground);
+  --color-data-teal: var(--data-teal);
+  --color-data-purple: var(--data-purple);
+  --color-data-magenta: var(--data-magenta);
+  --color-data-teal-2: var(--data-teal-2);
+  --color-data-purple-2: var(--data-purple-2);
+  --color-data-magenta-2: var(--data-magenta-2);
+  --color-card-border: var(--card-border);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-foreground-muted: var(--card-foreground-muted);
+  --color-data-indigo: var(--data-indigo);
+  --color-data-indigo-2: var(--data-indigo-2);
+  --color-brand-primary-background: var(--brand-primary-background);
+  --color-brand-primary-accent: var(--brand-primary-accent);
+  --color-brand-primary-border: var(--brand-primary-border);
+  --color-background: var(--background);
+  --color-card-brand-secondary-foreground: var(--card-brand-secondary-foreground);
+  --color-card-brand-secondary-foreground-muted: var(--card-brand-secondary-foreground-muted);
+  --color-brand-background: var(--brand-background);
+  --color-card-brand-secondary-background: var(--card-brand-secondary-background);
+  --color-card-background: var(--card-background);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-foreground-muted: var(--secondary-foreground-muted);
+  --color-secondary-border-accent: var(--secondary-border-accent);
+  --color-secondary-border-muted: var(--secondary-border-muted);
+  --color-secondary-background: var(--secondary-background);
+  --color-secondary-border: var(--secondary-border);
+  --color-destructive-background: var(--destructive-background);
+  --color-card-primary-foreground: var(--card-primary-foreground);
+  --color-card-primary-foreground-muted: var(--card-primary-foreground-muted);
+  --color-card-primary-border: var(--card-primary-border);
+  --color-success-primary-background: var(--success-primary-background);
+  --color-button-brand-primary-accent: var(--button-brand-primary-accent);
+  --color-button-brand-primary-foreground: var(--button-brand-primary-foreground);
+  --color-button-brand-primary-background: var(--button-brand-primary-background);
+  --color-button-destructive-accent: var(--button-destructive-accent);
+  --color-button-destructive-background: var(--button-destructive-background);
+  --color-button-destructive-primary-foreground: var(--button-destructive-primary-foreground);
+  --color-button-primary-accent: var(--button-primary-accent);
+  --color-button-primary-foreground: var(--button-primary-foreground);
+  --color-button-primary-foreground-muted: var(--button-primary-foreground-muted);
+  --color-button-primary-muted: var(--button-primary-muted);
+  --color-button-primary-background: var(--button-primary-background);
+  --color-button-secondary-border-accent: var(--button-secondary-border-accent);
+  --color-button-secondary-border: var(--button-secondary-border);
+  --color-button-secondary-border-muted: var(--button-secondary-border-muted);
+  --color-button-secondary-foreground: var(--button-secondary-foreground);
+  --color-button-secondary-foreground-accent: var(--button-secondary-foreground-accent);
+  --color-button-secondary-foreground-muted: var(--button-secondary-foreground-muted);
+  --color-button-secondary-background: var(--button-secondary-background);
+  --color-card-brand-secondary-border: var(--card-brand-secondary-border);
+  --color-card-brand-accent: var(--card-brand-accent);
+  --color-card-brand-border-accent: var(--card-brand-border-accent);
+  --color-brand-border: var(--brand-border);
+  --color-input-foreground: var(--input-foreground);
+  --color-input-border: var(--input-border);
+  --color-input-border-accent: var(--input-border-accent);
+  --color-input-foreground-accent: var(--input-foreground-accent);
+  --color-input-foreground-muted: var(--input-foreground-muted);
+  --color-input-destructive-background: var(--input-destructive-background);
+  --color-input-destructive-foreground: var(--input-destructive-foreground);
+  --color-input-destructive-foreground-accent: var(--input-destructive-foreground-accent);
+  --color-input-destructive-border: var(--input-destructive-border);
+  --color-overlay: var(--overlay);
+  --color-card-reversed-background: var(--card-reversed-background);
+  --color-card-reversed-foreground: var(--card-reversed-foreground);
+  --color-card-reversed-foreground-muted: var(--card-reversed-foreground-muted);
+  --color-brand-accent: var(--brand-accent);
+}
+
+/* Static scales — grouped by type. Values from Figma `theme-values`. */
+@theme {
+  /* Font family — the `--font-archivo` / `--font-chakra-petch` vars are
+     injected by the app's `next/font/google` loader (see @financedistrict-platform/components
+     `fonts.ts`); literal names + system stacks are the fallback. */
+  --font-sans: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-chakra-petch), "Chakra Petch", ui-monospace, SFMono-Regular, monospace;
+  --font-caption: var(--font-chakra-petch), "Chakra Petch", ui-monospace, SFMono-Regular, monospace;
+
+  /* Font style */
+  --font-style-italic: italic;
+  --font-style-not-italic: normal;
+
+  /* Font weight */
+  --font-weight-thin: 100;
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+
+  /* Font size (text) */
+  --text-2xs: 10px;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
+  --text-4xl: 36px;
+  --text-5xl: 40px;
+
+  /* Letter spacing (tracking) */
+  --tracking-tightest: -2px;
+  --tracking-tighter: -1.5px;
+  --tracking-tight: -1px;
+  --tracking-normal: 0px;
+  --tracking-wide: 1px;
+  --tracking-wider: 1.5px;
+  --tracking-widest: 2px;
+
+  /* Line height (leading) */
+  --leading-3: 12px;
+  --leading-4: 16px;
+  --leading-5: 20px;
+  --leading-6: 24px;
+  --leading-7: 28px;
+  --leading-8: 32px;
+  --leading-9: 36px;
+  --leading-10: 44px;
+
+  /* Border radius (rem; = px÷16 at the 16px root — matches Figma at default) */
+  --radius-none: 0rem;
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.5rem;
+  --radius-full: 9999px;
+
+  /* Spacing — Figma's spacing is a linear scale; the base multiplier
+     reproduces every step exactly (p-1=0.25rem=4px … p-96=24rem=384px),
+     including the fractional (0.5/1.5/2.5/3.5) and auto-generated negatives. */
+  --spacing: 0.25rem;
+
+  /* Breakpoints (overrides Tailwind defaults; note 2xl = 1440px) */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
+
+  /* Containers (rem) */
+  --container-0: 0rem;
+  --container-5xs: 5.25rem;
+  --container-4xs: 13rem;
+  --container-3xs: 15.25rem;
+  --container-2xs: 18rem;
+  --container-xs: 20rem;
+  --container-sm: 24rem;
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 37.5rem;
+  --container-2xl: 42rem;
+  --container-3xl: 48rem;
+  --container-4xl: 56.25rem;
+  --container-5xl: 64rem;
+  --container-6xl: 72rem;
+  --container-7xl: 80rem;
+
+  /* Blur */
+  --blur-none: 0px;
+  --blur-xs: 4px;
+  --blur-sm: 8px;
+  --blur-md: 12px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+  --blur-2xl: 40px;
+  --blur-3xl: 64px;
+
+  /* Border width */
+  --border-width-0: 0px;
+  --border-width-1: 1px;
+  --border-width-2: 2px;
+  --border-width-3: 3px;
+  --border-width-4: 4px;
+  --border-width-8: 8px;
+
+  /* Skew */
+  --skew-0: 0deg;
+  --skew-1: 1deg;
+  --skew-2: 2deg;
+  --skew-3: 3deg;
+  --skew-6: 6deg;
+  --skew-12: 12deg;
+
+  /* Opacity (0–1; Tailwind also generates opacity-0..100 dynamically) */
+  --opacity-0: 0;
+  --opacity-5: 0.05;
+  --opacity-10: 0.1;
+  --opacity-15: 0.15;
+  --opacity-20: 0.2;
+  --opacity-25: 0.25;
+  --opacity-30: 0.3;
+  --opacity-35: 0.35;
+  --opacity-40: 0.4;
+  --opacity-45: 0.45;
+  --opacity-50: 0.5;
+  --opacity-55: 0.55;
+  --opacity-60: 0.6;
+  --opacity-65: 0.65;
+  --opacity-70: 0.7;
+  --opacity-75: 0.75;
+  --opacity-80: 0.8;
+  --opacity-85: 0.85;
+  --opacity-90: 0.9;
+  --opacity-95: 0.95;
+  --opacity-100: 1;
+}
+
+/* Shadow scale — from Figma effect styles `shadow/s`, `shadow/xs`.
+   Color stops (`--effect-01`/`--effect-02`) are theme-mode-aware. */
+:root {
+  --shadows-props-xs-x: 0px;
+  --shadows-props-xs-y: 0px;
+  --shadows-props-xs-blur: 5px;
+  --shadows-props-xs-spread: 0px;
+  --shadows-props-s-x: 0px;
+  --shadows-props-s-y: 0px;
+  --shadows-props-s-blur: 10px;
+  --shadows-props-s-spread: 2px;
+  --shadow-xs: var(--shadows-props-xs-x) var(--shadows-props-xs-y)
+    var(--shadows-props-xs-blur) var(--shadows-props-xs-spread)
+    var(--tw-shadow-color, var(--effect-01));
+  --shadow-s: var(--shadows-props-s-x) var(--shadows-props-s-y)
+    var(--shadows-props-s-blur) var(--shadows-props-s-spread)
+    var(--tw-shadow-color, var(--effect-02));
+}
+
+/* Shadow utilities (override Tailwind's default shadow-xs with our scale) */
+@utility shadow-xs {
+  box-shadow: var(--shadow-xs);
+}
+@utility shadow-s {
+  box-shadow: var(--shadow-s);
+}
+
+/* Fader (scrim) — from Figma paint style `fader-lg`: transparent → solid,
+   theme-aware via --fader-02 (transparent stop) / --fader-01 (solid stop). */
+@utility fader-b {
+  background-image: linear-gradient(to bottom, var(--fader-02), var(--fader-01));
+}
+@utility fader-t {
+  background-image: linear-gradient(to top, var(--fader-02), var(--fader-01));
+}
+
+/* Composite type styles — from Figma text styles. Each mirrors a Figma text
+   style and is fully token-bound (font / size / leading / tracking / weight). */
+@utility display-01 {
+  font-family: var(--font-sans);
+  font-size: var(--text-5xl);
+  line-height: var(--leading-10);
+  letter-spacing: var(--tracking-tightest);
+  font-weight: var(--font-weight-medium);
+}
+@utility display-02 {
+  font-family: var(--font-sans);
+  font-size: var(--text-3xl);
+  line-height: var(--leading-9);
+  letter-spacing: var(--tracking-tightest);
+  font-weight: var(--font-weight-medium);
+}
+@utility display-03 {
+  font-family: var(--font-sans);
+  font-size: var(--text-2xl);
+  line-height: var(--leading-7);
+  letter-spacing: var(--tracking-tight);
+  font-weight: var(--font-weight-medium);
+}
+@utility display-04 {
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  line-height: var(--leading-6);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-medium);
+}
+@utility body-01 {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: var(--leading-6);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-normal);
+}
+@utility body-01-medium {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: var(--leading-6);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-medium);
+}
+@utility body-02 {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-6);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-normal);
+}
+@utility body-02-medium {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-6);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-medium);
+}
+@utility body-03 {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-5);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-normal);
+}
+@utility body-03-medium {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-5);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-medium);
+}
+@utility body-04 {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  line-height: var(--leading-4);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-normal);
+}
+@utility body-mono-02-medium {
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  line-height: var(--leading-5);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-medium);
+}
+@utility body-mono-03 {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-5);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-normal);
+}
+@utility body-mono-04 {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-4);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-normal);
+}
+@utility caption-01 {
+  font-family: var(--font-caption);
+  font-size: var(--text-base);
+  line-height: var(--leading-6);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-normal);
+}
+@utility caption-02-medium {
+  font-family: var(--font-caption);
+  font-size: var(--text-sm);
+  line-height: var(--leading-5);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-medium);
+}
+@utility caption-02-semibold {
+  font-family: var(--font-caption);
+  font-size: var(--text-sm);
+  line-height: var(--leading-5);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-semibold);
+}
+@utility caption-03-medium {
+  font-family: var(--font-caption);
+  font-size: var(--text-xs);
+  line-height: var(--leading-4);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-medium);
+}
+@utility button-01 {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-5);
+  letter-spacing: var(--tracking-normal);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Element defaults — low-specificity, so any app utility overrides them.
+   Gives all FD webapps a shared baseline (headings → display styles). */
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--border);
+    outline-color: var(--focus);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 {
+    @apply display-01;
+  }
+  h2 {
+    @apply display-02;
+  }
+  h3 {
+    @apply display-03;
+  }
+  h4 {
+    @apply display-04;
+  }
+}

@@ -1,0 +1,8 @@
+/* Mirrors an app's CSS entry: Tailwind v4 over the FD token layer, with the
+   optional @fontsource font default (ADR-0008) satisfying the variable contract. */
+@import "tailwindcss";
+@import "@financedistrict/apps-ui/fonts.css";
+@import "@financedistrict/apps-tokens/theme.css";
+
+/* Scan the component sources for utility classes. */
+@source "../src";
