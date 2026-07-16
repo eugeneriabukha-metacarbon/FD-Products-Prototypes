@@ -265,6 +265,10 @@ export function DistrictPass({
                   ref={nicknameRef}
                   value={editingNickname ? draftNickname : nickname}
                   readOnly={!editingNickname}
+                  tabIndex={editingNickname ? undefined : -1}
+                  className={
+                    editingNickname ? undefined : "pointer-events-none"
+                  }
                   onChange={(event) => setDraftNickname(event.target.value)}
                   rightSlot={
                     editingNickname ? undefined : (
