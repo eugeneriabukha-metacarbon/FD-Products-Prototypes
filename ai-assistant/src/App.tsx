@@ -39,7 +39,7 @@ export default function App() {
   const [attachments, setAttachments] = React.useState<Attachment[]>([]);
   const [paywallOpen, setPaywallOpen] = React.useState(false);
   const [currentPlan, setCurrentPlan] = React.useState<PlanId>("free");
-  const [view, setView] = React.useState<AppView>("assistant");
+  const [view, setView] = React.useState<AppView>("launchpad");
   const replyCounter = React.useRef(0);
   const replyTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
