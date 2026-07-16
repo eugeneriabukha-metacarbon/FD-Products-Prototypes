@@ -11,12 +11,14 @@
 @source "../node_modules/@financedistrict/apps-ui/src";
 
 /**
- * Launchpad: hovering a card removes the divider directly above it. Written as
- * plain CSS (unlayered, so it beats the Tailwind `border-*` utility) because
- * the equivalent arbitrary variant `[&:has(+*:hover)]:border-b-transparent`
- * is dropped by the production build's class scanner — it works under the dev
- * server but not in `vite build` (i.e. on Vercel).
+ * Launchpad: hovering a card clears the dividers touching it — its own bottom
+ * border AND the border of the card directly above it. Written as plain CSS
+ * (unlayered, so it beats the Tailwind `border-*` utility) because the
+ * equivalent Tailwind hover / arbitrary `:has()` variants don't reliably win /
+ * survive the production build — they work under the dev server but not in
+ * `vite build` (i.e. on Vercel).
  */
+.launchpad-app-row:hover,
 .launchpad-app-row:has(+ .launchpad-app-row:hover) {
   border-bottom-color: transparent;
 }
