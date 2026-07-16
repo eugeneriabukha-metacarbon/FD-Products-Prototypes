@@ -1,0 +1,6 @@
+<svg viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Brandmark">
+<path d="M0 10H2V2.5C2 2.224 2.224 2 2.5 2H12V0H4L0 4V10Z" fill="var(--fill-0, #6D6D6D)"/>
+<path d="M12 4H10V7.5C10 7.776 9.776 8 9.5 8H4V10H8L12 6V4Z" fill="var(--fill-0, #6D6D6D)"/>
+</g>
+</svg>

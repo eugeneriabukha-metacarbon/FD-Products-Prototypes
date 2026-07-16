@@ -19,6 +19,12 @@ import { ChatView } from "./components/ChatView";
 import { Composer } from "./components/Composer";
 import { Paywall, type PlanId } from "./components/Paywall";
 import { QuickActions } from "./components/QuickActions";
+import { Launchpad } from "./components/Launchpad";
+import { DistrictPassComingSoon } from "./components/DistrictPassComingSoon";
+
+/** Top-level screen. The assistant is the default; the Launchpad is the app
+ *  switcher reached from the header, and District Pass is a coming-soon stub. */
+type AppView = "assistant" | "launchpad" | "district-pass";
 
 /**
  * AI Assistant prototype — simulated chat experience over the FD design
@@ -33,6 +39,7 @@ export default function App() {
   const [attachments, setAttachments] = React.useState<Attachment[]>([]);
   const [paywallOpen, setPaywallOpen] = React.useState(false);
   const [currentPlan, setCurrentPlan] = React.useState<PlanId>("free");
+  const [view, setView] = React.useState<AppView>("assistant");
   const replyCounter = React.useRef(0);
   const replyTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -50,7 +57,8 @@ export default function App() {
     setTyping(true);
     if (replyTimer.current) clearTimeout(replyTimer.current);
     replyTimer.current = setTimeout(() => {
-      const reply = CANNED_REPLIES[replyCounter.current % CANNED_REPLIES.length];
+      const reply =
+        CANNED_REPLIES[replyCounter.current % CANNED_REPLIES.length];
       replyCounter.current += 1;
       setChats((prev) =>
         prev.map((chat) =>
@@ -123,7 +131,9 @@ export default function App() {
 
   const handleAttach = () => {
     // Demo: stage the sample file set (only if nothing is staged yet).
-    setAttachments((prev) => (prev.length > 0 ? prev : createDemoAttachments()));
+    setAttachments((prev) =>
+      prev.length > 0 ? prev : createDemoAttachments(),
+    );
   };
 
   const handleRemoveAttachment = (id: string) => {
@@ -166,11 +176,33 @@ export default function App() {
     );
   }
 
+  if (view === "launchpad") {
+    return (
+      <Launchpad
+        onOpenAssistant={() => setView("assistant")}
+        onOpenDistrictPass={() => setView("district-pass")}
+        onUpgrade={() => setPaywallOpen(true)}
+        hasPaidPlan={currentPlan !== "free"}
+      />
+    );
+  }
+
+  if (view === "district-pass") {
+    return (
+      <DistrictPassComingSoon
+        onBack={() => setView("launchpad")}
+        onUpgrade={() => setPaywallOpen(true)}
+        hasPaidPlan={currentPlan !== "free"}
+      />
+    );
+  }
+
   return (
     <div className="bg-surface isolate flex h-screen flex-col">
       <Header
         onUpgrade={() => setPaywallOpen(true)}
         hasPaidPlan={currentPlan !== "free"}
+        onOpenLaunchpad={() => setView("launchpad")}
       />
 
       <div className="isolate relative flex min-h-0 w-full flex-1 items-start">
