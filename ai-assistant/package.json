@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@financedistrict/apps-icons": "file:fd-apps-design-system/packages/icons",
-    "@financedistrict/apps-tokens": "file:fd-apps-design-system/packages/tokens",
-    "@financedistrict/apps-ui": "file:fd-apps-design-system/packages/components",
+    "@financedistrict/apps-icons": "file:../fd-apps-design-system/packages/icons",
+    "@financedistrict/apps-tokens": "file:../fd-apps-design-system/packages/tokens",
+    "@financedistrict/apps-ui": "file:../fd-apps-design-system/packages/components",
     "@fontsource-variable/archivo": "^5.2.8",
     "@fontsource/chakra-petch": "^5.2.7",
     "@phosphor-icons/react": "^2.1.7",

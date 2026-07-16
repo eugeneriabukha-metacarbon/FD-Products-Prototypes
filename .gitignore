@@ -7,3 +7,6 @@ node_modules/.vite
 .env
 .env.*
 .vercel
+
+# TS build info
+*.tsbuildinfo
