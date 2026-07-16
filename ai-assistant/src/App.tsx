@@ -20,7 +20,7 @@ import { Composer } from "./components/Composer";
 import { Paywall, type PlanId } from "./components/Paywall";
 import { QuickActions } from "./components/QuickActions";
 import { Launchpad } from "./components/Launchpad";
-import { DistrictPassComingSoon } from "./components/DistrictPassComingSoon";
+import { DistrictPass } from "./components/DistrictPass";
 
 /** Top-level screen. The assistant is the default; the Launchpad is the app
  *  switcher reached from the header, and District Pass is a coming-soon stub. */
@@ -189,8 +189,8 @@ export default function App() {
 
   if (view === "district-pass") {
     return (
-      <DistrictPassComingSoon
-        onBack={() => setView("launchpad")}
+      <DistrictPass
+        onOpenLaunchpad={() => setView("launchpad")}
         onUpgrade={() => setPaywallOpen(true)}
         hasPaidPlan={currentPlan !== "free"}
       />
