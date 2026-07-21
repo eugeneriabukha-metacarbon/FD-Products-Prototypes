@@ -81,10 +81,12 @@ export function DistrictPass({
             <AccountRows
               onToast={showToast}
               onEditingChange={setAccountEditing}
+              lockedByOthers={twoFactorEditing}
             />
             <TwoFactorRow
               onToast={showToast}
               onEditingChange={setTwoFactorEditing}
+              lockedByOthers={accountEditing}
             />
           </div>
           <DangerZone

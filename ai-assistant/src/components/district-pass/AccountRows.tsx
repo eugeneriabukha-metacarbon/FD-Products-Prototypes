@@ -84,10 +84,13 @@ function PasswordRules({ value }: { value: string }) {
 export function AccountRows({
   onToast,
   onEditingChange,
+  lockedByOthers = false,
 }: {
   onToast: (message: string) => void;
   /** Reports whether the Email or Password row is currently being edited. */
   onEditingChange?: (editing: boolean) => void;
+  /** Another card in the tab is being edited — lock this card's Edit buttons. */
+  lockedByOthers?: boolean;
 }) {
   const [passwords, setPasswords] = React.useState({
     current: "",
@@ -196,7 +199,7 @@ export function AccountRows({
                 size="sm"
                 type="button"
                 onClick={startEditEmail}
-                disabled={editingPassword}
+                disabled={editingPassword || lockedByOthers}
               >
                 Edit
               </Button>
@@ -273,7 +276,7 @@ export function AccountRows({
                 size="sm"
                 type="button"
                 onClick={startEditPassword}
-                disabled={editingEmail}
+                disabled={editingEmail || lockedByOthers}
               >
                 Edit
               </Button>

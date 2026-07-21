@@ -13,10 +13,13 @@ import { FeatureCard } from "@financedistrict/apps-ui/feature-card";
 export function TwoFactorRow({
   onToast,
   onEditingChange,
+  lockedByOthers = false,
 }: {
   onToast: (message: string) => void;
   /** Reports whether the setup form is currently open. */
   onEditingChange?: (editing: boolean) => void;
+  /** Another card in the tab is being edited — lock this card's trigger. */
+  lockedByOthers?: boolean;
 }) {
   const [enabled, setEnabled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -85,6 +88,7 @@ export function TwoFactorRow({
               size="sm"
               type="button"
               onClick={turnOff}
+              disabled={lockedByOthers}
             >
               Turn off
             </Button>
@@ -94,6 +98,7 @@ export function TwoFactorRow({
               size="sm"
               type="button"
               onClick={startSetup}
+              disabled={lockedByOthers}
             >
               Set up
             </Button>
