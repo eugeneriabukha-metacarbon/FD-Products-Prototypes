@@ -23,11 +23,13 @@ export interface DistrictPassProps {
 }
 
 /**
- * District Pass — the FD identity/account product. A hero `PassCard`
- * (identity + verification credential) sits above a section of FeatureCard
- * rows (Nickname / Email / Password); each row expands in place into an edit
- * form (Edit → Cancel/Save, other rows' Edit disabled while editing).
- * Saves are simulated and confirmed with a DS Toast. Sibling of the AI Assistant.
+ * District Pass — the FD identity/account product. A hero `PassCard` (identity
+ * + verification credential) anchors a stack of sections: Account details
+ * (Nickname / Email / Password rows that expand in place to edit), Connected
+ * apps (revocable), Recent activity (auth audit log with a "View all" Panel
+ * slide-over), and a Danger zone (irreversible account deletion behind a
+ * type-to-confirm Dialog). All actions are simulated and confirmed with a DS
+ * Toast. Sibling of the AI Assistant.
  */
 export function DistrictPass({
   onOpenLaunchpad,
