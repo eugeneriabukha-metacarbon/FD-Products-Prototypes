@@ -7,6 +7,7 @@ import districtPassIconDark from "../assets/app-district-pass-dark.svg";
 import { ProductHeader } from "./ProductHeader";
 import { AccountRows } from "./district-pass/AccountRows";
 import { ActivityList } from "./district-pass/ActivityList";
+import { Configurator, VariantPlaceholder } from "./district-pass/Configurator";
 import { DangerZone } from "./district-pass/DangerZone";
 import { DevicesTab } from "./district-pass/DevicesTab";
 import { PassCard } from "./district-pass/PassCard";
@@ -37,6 +38,9 @@ export function DistrictPass({
 }: DistrictPassProps) {
   const [toast, setToast] = React.useState<string | null>(null);
   const [name, setName] = React.useState("Janno Jaerv");
+  // Stakeholder preview axes, driven by the Configurator toolbar.
+  const [navigation, setNavigation] = React.useState("tabs");
+  const [settings, setSettings] = React.useState("basic");
   const toastTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(
@@ -62,6 +66,13 @@ export function DistrictPass({
         hasPaidPlan={hasPaidPlan}
       />
 
+      <Configurator
+        navigation={navigation}
+        settings={settings}
+        onNavigationChange={setNavigation}
+        onSettingsChange={setSettings}
+      />
+
       <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-4 py-16">
         <motion.div
           className="flex w-full max-w-[480px] flex-col gap-8"
@@ -78,6 +89,11 @@ export function DistrictPass({
             }}
           />
 
+          {navigation === "sidebar" ? (
+            <VariantPlaceholder label="Sidebar navigation" />
+          ) : settings !== "basic" ? (
+            <VariantPlaceholder label="This settings preset" />
+          ) : (
           <Tabs.Root defaultValue="activity" className="gap-6">
             <Tabs.List
               aria-label="District Pass sections"
@@ -112,6 +128,7 @@ export function DistrictPass({
               <SupportTab onToast={showToast} />
             </Tabs.Content>
           </Tabs.Root>
+          )}
         </motion.div>
       </main>
 
