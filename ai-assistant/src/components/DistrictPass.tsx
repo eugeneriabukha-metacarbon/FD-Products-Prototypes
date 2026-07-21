@@ -6,12 +6,10 @@ import districtPassIconDark from "../assets/app-district-pass-dark.svg";
 import { ProductHeader } from "./ProductHeader";
 import { AccountRows } from "./district-pass/AccountRows";
 import { ActivityLogPanel } from "./district-pass/ActivityLogPanel";
-import { AgentAuthority } from "./district-pass/AgentAuthority";
 import { DangerZone } from "./district-pass/DangerZone";
 import { PassCard } from "./district-pass/PassCard";
 import { SecurityActivity } from "./district-pass/SecurityActivity";
 import { Section } from "./district-pass/Section";
-import { AGENTS, type AgentAuthorization } from "./district-pass/mockData";
 
 export interface DistrictPassProps {
   /** Return to the Launchpad (the app-switcher button). */
@@ -24,9 +22,9 @@ export interface DistrictPassProps {
 
 /**
  * District Pass — the FD identity/account product. A hero `PassCard` (identity
- * + verification credential) anchors a stack of sections: Account details
- * (Nickname / Email / Password rows that expand in place to edit), Connected
- * apps (revocable), Recent activity (auth audit log with a "View all" Panel
+ * + verification credential, with an editable display name) anchors a stack
+ * of sections: Account details (Email / Password rows that expand in place
+ * to edit), Recent activity (auth audit log with a "View all" Panel
  * slide-over), and a Danger zone (irreversible account deletion behind a
  * type-to-confirm Dialog). All actions are simulated and confirmed with a DS
  * Toast. Sibling of the AI Assistant.
@@ -38,8 +36,7 @@ export function DistrictPass({
 }: DistrictPassProps) {
   const [toast, setToast] = React.useState<string | null>(null);
   const [logOpen, setLogOpen] = React.useState(false);
-  const [agents, setAgents] =
-    React.useState<AgentAuthorization[]>(AGENTS);
+  const [name, setName] = React.useState("Janno Jaerv");
   const toastTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(
@@ -53,11 +50,6 @@ export function DistrictPass({
     setToast(message);
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(null), 3200);
-  };
-
-  const handleRevoke = (agent: AgentAuthorization) => {
-    setAgents((prev) => prev.filter((a) => a.id !== agent.id));
-    showToast(`Access revoked for ${agent.name}.`);
   };
 
   const handleCloseLog = React.useCallback(() => setLogOpen(false), []);
@@ -80,20 +72,16 @@ export function DistrictPass({
           transition={{ duration: 0.4, ease: "easeOut" }}
         >
           <PassCard
-            name="Janno Jaerv"
+            name={name}
             initials="JJ"
-            agentCount={agents.length}
+            onNameSave={(next) => {
+              setName(next);
+              showToast("Your name has been updated.");
+            }}
           />
 
           <Section title="Account details">
             <AccountRows onToast={showToast} />
-          </Section>
-
-          <Section
-            title="Agent authority"
-            caption="AI agents authorized to act on your behalf."
-          >
-            <AgentAuthority agents={agents} onRevoke={handleRevoke} />
           </Section>
 
           <Section title="Recent activity">

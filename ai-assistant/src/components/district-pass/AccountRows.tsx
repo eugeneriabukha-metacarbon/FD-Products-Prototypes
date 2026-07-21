@@ -6,7 +6,6 @@ import {
   EyeIcon,
   EyeSlashIcon,
   LockIcon,
-  UserIcon,
   XCircleIcon,
 } from "@phosphor-icons/react";
 import { Input } from "@financedistrict/apps-ui/input";
@@ -77,19 +76,15 @@ function PasswordRules({ value }: { value: string }) {
 }
 
 /**
- * Account rows — Nickname / Email / Password FeatureCard rows; each expands
- * in place into an edit form (Edit → Cancel/Save, other rows' Edit disabled
- * while editing). Saves are simulated and confirmed via `onToast`.
+ * Account rows — Email / Password FeatureCard rows; each expands in place
+ * into an edit form (Edit → Cancel/Save, other rows' Edit disabled while
+ * editing). Saves are simulated and confirmed via `onToast`.
  */
 export function AccountRows({
   onToast,
 }: {
   onToast: (message: string) => void;
 }) {
-  const [nickname, setNickname] = React.useState("Janno Jaerv");
-  const [draftNickname, setDraftNickname] = React.useState("Janno Jaerv");
-  const [editingNickname, setEditingNickname] = React.useState(false);
-  const nicknameRef = React.useRef<HTMLInputElement>(null);
   const [passwords, setPasswords] = React.useState({
     current: "",
     new: "",
@@ -110,25 +105,6 @@ export function AccountRows({
   });
   const [emailPasswordRevealed, setEmailPasswordRevealed] =
     React.useState(false);
-
-  // Focus + select the nickname once edit mode turns on.
-  React.useEffect(() => {
-    if (editingNickname) {
-      const input = nicknameRef.current;
-      input?.focus();
-      input?.select();
-    }
-  }, [editingNickname]);
-
-  const startEditNickname = () => {
-    setDraftNickname(nickname);
-    setEditingNickname(true);
-  };
-
-  const cancelEditNickname = () => {
-    setEditingNickname(false);
-    nicknameRef.current?.blur();
-  };
 
   const toggleReveal = (field: PasswordField) =>
     setRevealed((prev) => ({ ...prev, [field]: !prev[field] }));
@@ -163,14 +139,6 @@ export function AccountRows({
     onToast("Your email has been updated.");
   };
 
-  const handleSaveProfile = (event: React.FormEvent) => {
-    event.preventDefault();
-    setNickname(draftNickname);
-    setEditingNickname(false);
-    nicknameRef.current?.blur();
-    onToast("Your profile has been updated.");
-  };
-
   const resetPasswordForm = () => {
     setPasswords({ current: "", new: "", confirm: "" });
     setRevealed({ current: false, new: false, confirm: false });
@@ -192,53 +160,6 @@ export function AccountRows({
 
   return (
     <div className="flex flex-col">
-      {/* Nickname — header stays visible; form expands beneath it. */}
-      <form onSubmit={handleSaveProfile} className="border-card-border border-b">
-        <FeatureCard
-          title="Nickname"
-          subtitle={nickname}
-          caret={false}
-          leading={<UserIcon />}
-          trailing={
-            editingNickname ? (
-              <div className="flex gap-2">
-                <Button
-                  variation="secondary"
-                  size="sm"
-                  type="button"
-                  onClick={cancelEditNickname}
-                >
-                  Cancel
-                </Button>
-                <Button variation="primary" size="sm" type="submit">
-                  Save
-                </Button>
-              </div>
-            ) : (
-              <Button
-                variation="secondary"
-                size="sm"
-                type="button"
-                onClick={startEditNickname}
-                disabled={editingEmail || editingPassword}
-              >
-                Edit
-              </Button>
-            )
-          }
-        />
-        {editingNickname && (
-          <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
-            <Input
-              label="Nickname"
-              ref={nicknameRef}
-              value={draftNickname}
-              onChange={(event) => setDraftNickname(event.target.value)}
-            />
-          </div>
-        )}
-      </form>
-
       {/* Email — header stays visible; form expands beneath it. */}
       <form onSubmit={handleSaveEmail} className="border-card-border border-b">
         <FeatureCard
@@ -267,7 +188,7 @@ export function AccountRows({
                 size="sm"
                 type="button"
                 onClick={startEditEmail}
-                disabled={editingNickname || editingPassword}
+                disabled={editingPassword}
               >
                 Edit
               </Button>
@@ -344,7 +265,7 @@ export function AccountRows({
                 size="sm"
                 type="button"
                 onClick={startEditPassword}
-                disabled={editingNickname || editingEmail}
+                disabled={editingEmail}
               >
                 Edit
               </Button>
