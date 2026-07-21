@@ -2,15 +2,19 @@ import aiAssistantIcon from "../../assets/app-ai-assistant.svg";
 import agentWalletIcon from "../../assets/app-agent-wallet.svg";
 import prismIcon from "../../assets/app-prism.svg";
 
-export interface ConnectedApp {
+export interface AgentAuthorization {
   id: string;
   name: string;
   /** Imported SVG asset URL. */
   icon: string;
-  /** What the app can access via this District Pass. */
+  /** Allowed actions this agent may perform. */
   scope: string;
-  /** Human-readable "connected on" label. */
-  connected: string;
+  /** Monthly spend cap, formatted, e.g. "$10,000". */
+  spendCap: string;
+  /** Spend used this period, formatted, e.g. "$3,200". */
+  spendUsed: string;
+  /** e.g. "No expiry" | "Expires 12 Aug 2026". */
+  expires: string;
 }
 
 export type ActivityStatus = "success" | "failed";
@@ -25,35 +29,33 @@ export interface ActivityEvent {
   status: ActivityStatus;
 }
 
-/** Third-party entry has no bundled icon asset; ConnectedApps renders a fallback. */
-export const CONNECTED_APPS: ConnectedApp[] = [
+export const AGENTS: AgentAuthorization[] = [
   {
     id: "ai-assistant",
     name: "AI Assistant",
     icon: aiAssistantIcon,
     scope: "Trade, swap & transfer execution",
-    connected: "Connected Mar 2024",
+    spendCap: "$10,000",
+    spendUsed: "$3,200",
+    expires: "No expiry",
   },
   {
     id: "agent-wallet",
     name: "Agent Wallet",
     icon: agentWalletIcon,
-    scope: "Read balances & spending controls",
-    connected: "Connected Apr 2024",
+    scope: "Autonomous payments & transfers",
+    spendCap: "$2,500",
+    spendUsed: "$980",
+    expires: "Expires 12 Aug 2026",
   },
   {
     id: "prism",
     name: "Prism Payment Gateway",
     icon: prismIcon,
-    scope: "Initiate stablecoin payments",
-    connected: "Connected Jun 2024",
-  },
-  {
-    id: "ledgerlink",
-    name: "LedgerLink (third-party)",
-    icon: "",
-    scope: "Read profile & email",
-    connected: "Connected Jul 2024",
+    scope: "Settle stablecoin invoices",
+    spendCap: "$50,000",
+    spendUsed: "$12,400",
+    expires: "No expiry",
   },
 ];
 

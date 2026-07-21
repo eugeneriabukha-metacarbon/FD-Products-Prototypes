@@ -6,12 +6,12 @@ import districtPassIconDark from "../assets/app-district-pass-dark.svg";
 import { ProductHeader } from "./ProductHeader";
 import { AccountRows } from "./district-pass/AccountRows";
 import { ActivityLogPanel } from "./district-pass/ActivityLogPanel";
-import { ConnectedApps } from "./district-pass/ConnectedApps";
+import { AgentAuthority } from "./district-pass/AgentAuthority";
 import { DangerZone } from "./district-pass/DangerZone";
 import { PassCard } from "./district-pass/PassCard";
 import { SecurityActivity } from "./district-pass/SecurityActivity";
 import { Section } from "./district-pass/Section";
-import { CONNECTED_APPS, type ConnectedApp } from "./district-pass/mockData";
+import { AGENTS, type AgentAuthorization } from "./district-pass/mockData";
 
 export interface DistrictPassProps {
   /** Return to the Launchpad (the app-switcher button). */
@@ -38,7 +38,8 @@ export function DistrictPass({
 }: DistrictPassProps) {
   const [toast, setToast] = React.useState<string | null>(null);
   const [logOpen, setLogOpen] = React.useState(false);
-  const [apps, setApps] = React.useState<ConnectedApp[]>(CONNECTED_APPS);
+  const [agents, setAgents] =
+    React.useState<AgentAuthorization[]>(AGENTS);
   const toastTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(
@@ -54,9 +55,9 @@ export function DistrictPass({
     toastTimer.current = setTimeout(() => setToast(null), 3200);
   };
 
-  const handleRevoke = (app: ConnectedApp) => {
-    setApps((prev) => prev.filter((a) => a.id !== app.id));
-    showToast(`Access revoked for ${app.name}.`);
+  const handleRevoke = (agent: AgentAuthorization) => {
+    setAgents((prev) => prev.filter((a) => a.id !== agent.id));
+    showToast(`Access revoked for ${agent.name}.`);
   };
 
   const handleCloseLog = React.useCallback(() => setLogOpen(false), []);
@@ -81,7 +82,7 @@ export function DistrictPass({
           <PassCard
             name="Janno Jaerv"
             initials="JJ"
-            connectedCount={apps.length}
+            agentCount={agents.length}
           />
 
           <Section title="Account details">
@@ -89,10 +90,10 @@ export function DistrictPass({
           </Section>
 
           <Section
-            title="Connected apps"
-            caption="Apps using your District Pass."
+            title="Agent authority"
+            caption="AI agents authorized to act on your behalf."
           >
-            <ConnectedApps apps={apps} onRevoke={handleRevoke} />
+            <AgentAuthority agents={agents} onRevoke={handleRevoke} />
           </Section>
 
           <Section title="Recent activity">

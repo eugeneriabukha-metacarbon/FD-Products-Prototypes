@@ -8,11 +8,11 @@ const CARD_CUT = { cut: 16, radius: 2, radiusCuts: 0 } as const;
 export function PassCard({
   name,
   initials,
-  connectedCount,
+  agentCount,
 }: {
   name: string;
   initials: string;
-  connectedCount: number;
+  agentCount: number;
 }) {
   const { ref, clipPath } = useCutCornerClipPath<HTMLDivElement>(CARD_CUT.cut, {
     radius: CARD_CUT.radius,
@@ -56,7 +56,7 @@ export function PassCard({
           {PASS_ID}
         </span>
         <span className="body-03 opacity-70">
-          {connectedCount} connected {connectedCount === 1 ? "app" : "apps"}
+          {agentCount} active {agentCount === 1 ? "agent" : "agents"}
         </span>
       </div>
     </div>
