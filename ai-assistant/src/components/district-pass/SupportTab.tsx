@@ -1,4 +1,4 @@
-import { ChatCircleIcon, QuestionIcon } from "@phosphor-icons/react";
+import { EnvelopeIcon, QuestionIcon } from "@phosphor-icons/react";
 import { FeatureCard } from "@financedistrict/apps-ui/feature-card";
 
 /**
@@ -20,7 +20,7 @@ export function SupportTab({
           asChild
           title="Contact support"
           subtitle="Get help from our team."
-          leading={<ChatCircleIcon />}
+          leading={<EnvelopeIcon />}
         >
           <button
             type="button"
