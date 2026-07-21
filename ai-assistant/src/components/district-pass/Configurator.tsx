@@ -43,7 +43,7 @@ export function Configurator({
   onSettingsChange: (value: string) => void;
 }) {
   return (
-    <div className="border-card-border bg-card-background flex flex-wrap items-end gap-x-6 gap-y-3 border-b px-4 py-3">
+    <div className="border-card-border bg-card-background flex flex-wrap items-end gap-x-6 gap-y-3 border-y px-4 py-3">
       <span className="text-primary-foreground-muted flex items-center gap-1.5 pb-2.5 text-xs font-medium tracking-wide uppercase">
         <SlidersHorizontalIcon size={14} aria-hidden="true" />
         Preview
