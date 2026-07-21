@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "npm install --prefix ai-assistant",
+  "buildCommand": "npm run build --prefix ai-assistant",
+  "outputDirectory": "ai-assistant/dist"
+}
