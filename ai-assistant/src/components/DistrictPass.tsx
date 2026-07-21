@@ -11,7 +11,7 @@ import { DangerZone } from "./district-pass/DangerZone";
 import { PassCard } from "./district-pass/PassCard";
 import { SecurityActivity } from "./district-pass/SecurityActivity";
 import { Section } from "./district-pass/Section";
-import { CONNECTED_APPS } from "./district-pass/mockData";
+import { CONNECTED_APPS, type ConnectedApp } from "./district-pass/mockData";
 
 export interface DistrictPassProps {
   /** Return to the Launchpad (the app-switcher button). */
@@ -38,6 +38,7 @@ export function DistrictPass({
 }: DistrictPassProps) {
   const [toast, setToast] = React.useState<string | null>(null);
   const [logOpen, setLogOpen] = React.useState(false);
+  const [apps, setApps] = React.useState<ConnectedApp[]>(CONNECTED_APPS);
   const toastTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(
@@ -52,6 +53,13 @@ export function DistrictPass({
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(null), 3200);
   };
+
+  const handleRevoke = (app: ConnectedApp) => {
+    setApps((prev) => prev.filter((a) => a.id !== app.id));
+    showToast(`Access revoked for ${app.name}.`);
+  };
+
+  const handleCloseLog = React.useCallback(() => setLogOpen(false), []);
 
   return (
     <div className="bg-surface isolate flex h-screen flex-col">
@@ -73,7 +81,7 @@ export function DistrictPass({
           <PassCard
             name="Janno Jaerv"
             initials="JJ"
-            connectedCount={CONNECTED_APPS.length}
+            connectedCount={apps.length}
           />
 
           <Section title="Account details">
@@ -84,7 +92,7 @@ export function DistrictPass({
             title="Connected apps"
             caption="Apps using your District Pass."
           >
-            <ConnectedApps onToast={showToast} />
+            <ConnectedApps apps={apps} onRevoke={handleRevoke} />
           </Section>
 
           <Section title="Recent activity">
@@ -97,7 +105,7 @@ export function DistrictPass({
         </motion.div>
       </main>
 
-      <ActivityLogPanel open={logOpen} onClose={() => setLogOpen(false)} />
+      <ActivityLogPanel open={logOpen} onClose={handleCloseLog} />
 
       {/* Save confirmation — presentational DS Toast, auto-dismissed. */}
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4">

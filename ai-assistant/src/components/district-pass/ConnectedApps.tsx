@@ -1,20 +1,14 @@
-import * as React from "react";
 import { PlugsIcon } from "@phosphor-icons/react";
 import { Button } from "@financedistrict/apps-ui/button";
-import { CONNECTED_APPS, type ConnectedApp } from "./mockData";
+import { type ConnectedApp } from "./mockData";
 
 export function ConnectedApps({
-  onToast,
+  apps,
+  onRevoke,
 }: {
-  onToast: (message: string) => void;
+  apps: ConnectedApp[];
+  onRevoke: (app: ConnectedApp) => void;
 }) {
-  const [apps, setApps] = React.useState<ConnectedApp[]>(CONNECTED_APPS);
-
-  const revoke = (app: ConnectedApp) => {
-    setApps((prev) => prev.filter((a) => a.id !== app.id));
-    onToast(`Access revoked for ${app.name}.`);
-  };
-
   if (apps.length === 0) {
     return (
       <p className="body-03 text-primary-foreground-muted">
@@ -49,7 +43,8 @@ export function ConnectedApps({
             variation="secondary"
             size="sm"
             type="button"
-            onClick={() => revoke(app)}
+            aria-label={`Revoke access for ${app.name}`}
+            onClick={() => onRevoke(app)}
           >
             Revoke
           </Button>
