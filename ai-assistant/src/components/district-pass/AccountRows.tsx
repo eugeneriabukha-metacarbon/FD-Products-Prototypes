@@ -11,6 +11,7 @@ import {
 import { Input } from "@financedistrict/apps-ui/input";
 import { Button } from "@financedistrict/apps-ui/button";
 import { FeatureCard } from "@financedistrict/apps-ui/feature-card";
+import { ACCOUNT_EMAIL } from "./mockData";
 
 /** Shared muted icon-button styling (reveal toggles + edit affordances). */
 const ICON_BUTTON_CLASS =
@@ -96,7 +97,7 @@ export function AccountRows({
     confirm: false,
   });
   const [editingPassword, setEditingPassword] = React.useState(false);
-  const [email, setEmail] = React.useState("eugene.riabukha@metacarbon.com");
+  const [email, setEmail] = React.useState(ACCOUNT_EMAIL);
   const [editingEmail, setEditingEmail] = React.useState(false);
   const [emailForm, setEmailForm] = React.useState({
     newEmail: "",

@@ -4,7 +4,7 @@ import { useCutCornerClipPath } from "@financedistrict/apps-ui/cut-corner";
 import { Button } from "@financedistrict/apps-ui/button";
 import { Dialog } from "@financedistrict/apps-ui/dialog";
 import { Input } from "@financedistrict/apps-ui/input";
-import { PASS_ID, MEMBER_SINCE } from "./mockData";
+import { ACCOUNT_EMAIL } from "./mockData";
 
 const CARD_CUT = { cut: 24, radius: 2, radiusCuts: 0 } as const;
 
@@ -63,13 +63,13 @@ export function PassCard({
               </Dialog.Trigger>
             </div>
             <span className="body-03 text-card-brand-secondary-foreground-muted">
-              {MEMBER_SINCE}
+              {ACCOUNT_EMAIL}
             </span>
           </div>
         </div>
 
-        <span className="text-card-brand-secondary-foreground-muted font-mono text-sm tracking-widest">
-          {PASS_ID}
+        <span className="body-03 text-card-brand-secondary-foreground-muted">
+          Joined 2024
         </span>
 
         <Dialog.Content>

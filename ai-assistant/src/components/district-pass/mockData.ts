@@ -62,5 +62,5 @@ export const ACTIVITY_EVENTS: ActivityEvent[] = [
   },
 ];
 
-export const PASS_ID = "FD · 4C7A · 9E21";
-export const MEMBER_SINCE = "Member since 2024";
+/** Shared so the profile card and the Security > Email row stay in sync. */
+export const ACCOUNT_EMAIL = "janno.jaerv@example.com";
