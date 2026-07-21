@@ -5,7 +5,9 @@ import { Toast } from "@financedistrict/apps-ui/toast";
 import districtPassIconDark from "../assets/app-district-pass-dark.svg";
 import { ProductHeader } from "./ProductHeader";
 import { AccountRows } from "./district-pass/AccountRows";
+import { ConnectedApps } from "./district-pass/ConnectedApps";
 import { PassCard } from "./district-pass/PassCard";
+import { Section } from "./district-pass/Section";
 import { CONNECTED_APPS } from "./district-pass/mockData";
 
 export interface DistrictPassProps {
@@ -68,7 +70,16 @@ export function DistrictPass({
             connectedCount={CONNECTED_APPS.length}
           />
 
-          <AccountRows onToast={showToast} />
+          <Section title="Account details">
+            <AccountRows onToast={showToast} />
+          </Section>
+
+          <Section
+            title="Connected apps"
+            caption="Apps using your District Pass."
+          >
+            <ConnectedApps onToast={showToast} />
+          </Section>
         </motion.div>
       </main>
 
