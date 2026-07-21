@@ -5,8 +5,10 @@ import { Toast } from "@financedistrict/apps-ui/toast";
 import districtPassIconDark from "../assets/app-district-pass-dark.svg";
 import { ProductHeader } from "./ProductHeader";
 import { AccountRows } from "./district-pass/AccountRows";
+import { ActivityLogPanel } from "./district-pass/ActivityLogPanel";
 import { ConnectedApps } from "./district-pass/ConnectedApps";
 import { PassCard } from "./district-pass/PassCard";
+import { SecurityActivity } from "./district-pass/SecurityActivity";
 import { Section } from "./district-pass/Section";
 import { CONNECTED_APPS } from "./district-pass/mockData";
 
@@ -32,6 +34,7 @@ export function DistrictPass({
   hasPaidPlan = false,
 }: DistrictPassProps) {
   const [toast, setToast] = React.useState<string | null>(null);
+  const [logOpen, setLogOpen] = React.useState(false);
   const toastTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(
@@ -80,8 +83,14 @@ export function DistrictPass({
           >
             <ConnectedApps onToast={showToast} />
           </Section>
+
+          <Section title="Recent activity">
+            <SecurityActivity onViewAll={() => setLogOpen(true)} />
+          </Section>
         </motion.div>
       </main>
+
+      <ActivityLogPanel open={logOpen} onClose={() => setLogOpen(false)} />
 
       {/* Save confirmation — presentational DS Toast, auto-dismissed. */}
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4">
