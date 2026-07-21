@@ -75,6 +75,8 @@ export interface DeviceSession {
   /** Human-readable last-active time. */
   lastActive: string;
   kind: DeviceKind;
+  /** The session this app is running in; "end all" keeps it. */
+  current?: boolean;
 }
 
 /** Active signed-in sessions, most recent first. */
@@ -94,6 +96,7 @@ export const DEVICES: DeviceSession[] = [
     location: "Tallinn, EE",
     lastActive: "Jul 19, 03:11",
     kind: "laptop",
+    current: true,
   },
   {
     id: "d3",

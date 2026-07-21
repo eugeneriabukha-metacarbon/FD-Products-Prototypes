@@ -3,9 +3,11 @@ import {
   DesktopIcon,
   DeviceMobileIcon,
   LaptopIcon,
+  SignOutIcon,
   XIcon,
 } from "@phosphor-icons/react";
 import { Button } from "@financedistrict/apps-ui/button";
+import { Dialog } from "@financedistrict/apps-ui/dialog";
 import { DEVICES, type DeviceKind, type DeviceSession } from "./mockData";
 
 const DEVICE_ICON: Record<DeviceKind, typeof LaptopIcon> = {
@@ -22,8 +24,9 @@ const SIGN_OUT_BUTTON_CLASS =
  * Devices tab — active signed-in sessions. Each row reuses the Activity-tab
  * row layout (leading icon · name · browser/location · last-active) plus a
  * trailing X to sign that device out. Below the list, an "End all sessions"
- * row reuses the Security tab's danger-zone layout (muted copy + destructive
- * button). All actions are simulated and confirmed with a toast.
+ * row (danger-zone layout: muted copy + destructive button) opens a
+ * confirmation dialog and, on confirm, ends every session except the current
+ * one. All actions are simulated and confirmed with a toast.
  */
 export function DevicesTab({
   onToast,
@@ -31,15 +34,19 @@ export function DevicesTab({
   onToast: (message: string) => void;
 }) {
   const [devices, setDevices] = React.useState<DeviceSession[]>(DEVICES);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+
+  const otherSessions = devices.filter((d) => !d.current);
 
   const signOut = (device: DeviceSession) => {
     setDevices((prev) => prev.filter((d) => d.id !== device.id));
     onToast(`Signed out of ${device.name}.`);
   };
 
-  const endAll = () => {
-    setDevices([]);
-    onToast("All sessions ended.");
+  const endAllOthers = () => {
+    setDevices((prev) => prev.filter((d) => d.current));
+    setConfirmOpen(false);
+    onToast("All other sessions ended.");
   };
 
   return (
@@ -87,22 +94,46 @@ export function DevicesTab({
         </ul>
       )}
 
-      <div className="flex items-center justify-between gap-4">
-        <p className="body-03 text-primary-foreground-muted">
-          Sign out of every device where you're currently signed in, including
-          this one.
-        </p>
-        <Button
-          variation="destructive"
-          size="sm"
-          type="button"
-          className="shrink-0 whitespace-nowrap"
-          disabled={devices.length === 0}
-          onClick={endAll}
-        >
-          End all sessions
-        </Button>
-      </div>
+      <Dialog.Root open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <div className="flex items-center justify-between gap-4">
+          <p className="body-03 text-primary-foreground-muted">
+            This will end all active sessions except your current one.
+          </p>
+          <Dialog.Trigger asChild>
+            <Button
+              variation="destructive"
+              size="sm"
+              type="button"
+              className="shrink-0 whitespace-nowrap"
+              disabled={otherSessions.length === 0}
+            >
+              End all sessions
+            </Button>
+          </Dialog.Trigger>
+        </div>
+        <Dialog.Content>
+          <Dialog.Header
+            icon={<SignOutIcon weight="fill" />}
+            title="End all sessions?"
+            description="This ends every active session except your current one. Those devices will need to sign in again."
+            showClose
+          />
+          <Dialog.Footer>
+            <Dialog.Close asChild>
+              <Button variation="secondary" type="button">
+                Cancel
+              </Button>
+            </Dialog.Close>
+            <Button
+              variation="destructive"
+              type="button"
+              onClick={endAllOthers}
+            >
+              End all sessions
+            </Button>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog.Root>
     </div>
   );
 }
