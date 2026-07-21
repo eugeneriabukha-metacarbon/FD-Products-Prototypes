@@ -54,15 +54,39 @@ export function PassCard({
       />
 
       <Dialog.Root open={open} onOpenChange={handleOpenChange}>
-        <Dialog.Trigger asChild>
-          <button
-            type="button"
-            aria-label="Edit name"
-            className={`absolute top-4 right-4 z-10 ${EDIT_BUTTON_CLASS}`}
-          >
-            <PencilSimpleIcon size={16} />
-          </button>
-        </Dialog.Trigger>
+        <div className="flex items-center gap-4">
+          <span className="button-01 bg-brand-primary-accent text-brand-primary-foreground flex size-14 items-center justify-center rounded-sm text-xl">
+            {initials}
+          </span>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-1.5">
+              <span className="text-lg font-semibold">{name}</span>
+              <SealCheckIcon
+                size={18}
+                weight="fill"
+                className="text-brand-primary-accent"
+                aria-label="Verified identity"
+              />
+              <Dialog.Trigger asChild>
+                <button
+                  type="button"
+                  aria-label="Edit name"
+                  className={EDIT_BUTTON_CLASS}
+                >
+                  <PencilSimpleIcon size={16} />
+                </button>
+              </Dialog.Trigger>
+            </div>
+            <span className="body-03 opacity-70">{MEMBER_SINCE}</span>
+          </div>
+        </div>
+
+        <div className="flex items-end justify-between">
+          <span className="font-mono text-sm tracking-widest opacity-80">
+            {PASS_ID}
+          </span>
+        </div>
+
         <Dialog.Content>
           <Dialog.Header title="Edit name" showClose />
           <Dialog.Body>
@@ -84,30 +108,6 @@ export function PassCard({
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog.Root>
-
-      <div className="flex items-center gap-4">
-        <span className="button-01 bg-brand-primary-accent text-brand-primary-foreground flex size-14 items-center justify-center rounded-sm text-xl">
-          {initials}
-        </span>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-1.5">
-            <span className="text-lg font-semibold">{name}</span>
-            <SealCheckIcon
-              size={18}
-              weight="fill"
-              className="text-brand-primary-accent"
-              aria-label="Verified identity"
-            />
-          </div>
-          <span className="body-03 opacity-70">{MEMBER_SINCE}</span>
-        </div>
-      </div>
-
-      <div className="flex items-end justify-between">
-        <span className="font-mono text-sm tracking-widest opacity-80">
-          {PASS_ID}
-        </span>
-      </div>
     </div>
   );
 }
