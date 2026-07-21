@@ -64,3 +64,43 @@ export const ACTIVITY_EVENTS: ActivityEvent[] = [
 
 /** Shared so the profile card and the Security > Email row stay in sync. */
 export const ACCOUNT_EMAIL = "janno.jaerv@example.com";
+
+export type DeviceKind = "phone" | "laptop" | "desktop";
+
+export interface DeviceSession {
+  id: string;
+  name: string;
+  browser: string;
+  location: string;
+  /** Human-readable last-active time. */
+  lastActive: string;
+  kind: DeviceKind;
+}
+
+/** Active signed-in sessions, most recent first. */
+export const DEVICES: DeviceSession[] = [
+  {
+    id: "d1",
+    name: "iPhone 17",
+    browser: "Chrome",
+    location: "Tallinn, EE",
+    lastActive: "Today, 09:24",
+    kind: "phone",
+  },
+  {
+    id: "d2",
+    name: "MacBook Pro",
+    browser: "Chrome",
+    location: "Tallinn, EE",
+    lastActive: "Jul 19, 03:11",
+    kind: "laptop",
+  },
+  {
+    id: "d3",
+    name: "iMac",
+    browser: "Safari",
+    location: "Tallinn, EE",
+    lastActive: "Jul 15, 11:47",
+    kind: "desktop",
+  },
+];

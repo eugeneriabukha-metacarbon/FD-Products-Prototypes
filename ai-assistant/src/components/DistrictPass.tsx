@@ -8,6 +8,7 @@ import { ProductHeader } from "./ProductHeader";
 import { AccountRows } from "./district-pass/AccountRows";
 import { ActivityList } from "./district-pass/ActivityList";
 import { DangerZone } from "./district-pass/DangerZone";
+import { DevicesTab } from "./district-pass/DevicesTab";
 import { PassCard } from "./district-pass/PassCard";
 import { SupportTab } from "./district-pass/SupportTab";
 
@@ -83,6 +84,7 @@ export function DistrictPass({
               className="border-card-border w-full border-b"
             >
               <Tabs.Trigger value="activity">Activity</Tabs.Trigger>
+              <Tabs.Trigger value="devices">Devices</Tabs.Trigger>
               <Tabs.Trigger value="security">Security</Tabs.Trigger>
               <Tabs.Trigger value="support">Support</Tabs.Trigger>
             </Tabs.List>
@@ -100,6 +102,10 @@ export function DistrictPass({
 
             <Tabs.Content value="activity">
               <ActivityList />
+            </Tabs.Content>
+
+            <Tabs.Content value="devices">
+              <DevicesTab onToast={showToast} />
             </Tabs.Content>
 
             <Tabs.Content value="support">
