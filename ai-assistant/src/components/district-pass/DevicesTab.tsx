@@ -82,7 +82,10 @@ export function DevicesTab({
                 <span className="body-03 text-primary-foreground-muted shrink-0">
                   {device.lastActive}
                 </span>
-                {!device.current && (
+                {device.current ? (
+                  // Reserve the X's footprint so the timestamps stay aligned.
+                  <span className="size-[18px] shrink-0" aria-hidden="true" />
+                ) : (
                   <button
                     type="button"
                     aria-label={`Sign out ${device.name}`}
