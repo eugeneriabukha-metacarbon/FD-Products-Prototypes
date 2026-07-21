@@ -83,8 +83,11 @@ function PasswordRules({ value }: { value: string }) {
  */
 export function AccountRows({
   onToast,
+  onEditingChange,
 }: {
   onToast: (message: string) => void;
+  /** Reports whether the Email or Password row is currently being edited. */
+  onEditingChange?: (editing: boolean) => void;
 }) {
   const [passwords, setPasswords] = React.useState({
     current: "",
@@ -106,6 +109,10 @@ export function AccountRows({
   });
   const [emailPasswordRevealed, setEmailPasswordRevealed] =
     React.useState(false);
+
+  React.useEffect(() => {
+    onEditingChange?.(editingEmail || editingPassword);
+  }, [editingEmail, editingPassword, onEditingChange]);
 
   const toggleReveal = (field: PasswordField) =>
     setRevealed((prev) => ({ ...prev, [field]: !prev[field] }));

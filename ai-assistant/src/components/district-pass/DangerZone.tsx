@@ -13,7 +13,14 @@ import { Dialog } from "@financedistrict/apps-ui/dialog";
  * just closes the dialog and calls `onDeleted` (the parent shows a toast) —
  * no routing, no real deletion.
  */
-export function DangerZone({ onDeleted }: { onDeleted: () => void }) {
+export function DangerZone({
+  onDeleted,
+  disabled = false,
+}: {
+  onDeleted: () => void;
+  /** Disabled while a Security card is in edit mode. */
+  disabled?: boolean;
+}) {
   const [open, setOpen] = React.useState(false);
   const [password, setPassword] = React.useState("");
 
@@ -45,6 +52,7 @@ export function DangerZone({ onDeleted }: { onDeleted: () => void }) {
             variation="destructive"
             size="sm"
             type="button"
+            disabled={disabled}
             className="shrink-0 whitespace-nowrap"
           >
             Delete account

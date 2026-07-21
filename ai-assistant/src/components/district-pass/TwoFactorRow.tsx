@@ -12,12 +12,19 @@ import { FeatureCard } from "@financedistrict/apps-ui/feature-card";
  */
 export function TwoFactorRow({
   onToast,
+  onEditingChange,
 }: {
   onToast: (message: string) => void;
+  /** Reports whether the setup form is currently open. */
+  onEditingChange?: (editing: boolean) => void;
 }) {
   const [enabled, setEnabled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [code, setCode] = React.useState("");
+
+  React.useEffect(() => {
+    onEditingChange?.(open);
+  }, [open, onEditingChange]);
 
   const canEnable = /^\d{6}$/.test(code);
 

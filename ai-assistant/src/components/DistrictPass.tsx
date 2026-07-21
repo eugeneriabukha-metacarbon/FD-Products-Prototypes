@@ -46,6 +46,9 @@ export function DistrictPass({
   // Stakeholder preview axes, driven by the Configurator toolbar.
   const [navigation, setNavigation] = React.useState("tabs");
   const [settings, setSettings] = React.useState("basic");
+  // A Security card (Email / Password / 2FA) is mid-edit — locks the delete action.
+  const [accountEditing, setAccountEditing] = React.useState(false);
+  const [twoFactorEditing, setTwoFactorEditing] = React.useState(false);
   const toastTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(
@@ -75,11 +78,18 @@ export function DistrictPass({
       content: (
         <div className="flex flex-col gap-8">
           <div className="flex flex-col">
-            <AccountRows onToast={showToast} />
-            <TwoFactorRow onToast={showToast} />
+            <AccountRows
+              onToast={showToast}
+              onEditingChange={setAccountEditing}
+            />
+            <TwoFactorRow
+              onToast={showToast}
+              onEditingChange={setTwoFactorEditing}
+            />
           </div>
           <DangerZone
             onDeleted={() => showToast("Your account has been deleted.")}
+            disabled={accountEditing || twoFactorEditing}
           />
         </div>
       ),
