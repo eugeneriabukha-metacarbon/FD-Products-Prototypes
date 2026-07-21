@@ -12,7 +12,7 @@ export function Section({
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h2 className="text-primary-foreground text-base font-semibold">
+        <h2 className="display-04 text-primary-foreground">
           {title}
         </h2>
         {caption && (
