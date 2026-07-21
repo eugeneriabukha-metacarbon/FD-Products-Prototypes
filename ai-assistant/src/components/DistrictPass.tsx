@@ -10,6 +10,10 @@ import { ActivityList } from "./district-pass/ActivityList";
 import { Configurator, VariantPlaceholder } from "./district-pass/Configurator";
 import { DangerZone } from "./district-pass/DangerZone";
 import { DevicesTab } from "./district-pass/DevicesTab";
+import {
+  SidebarLayout,
+  type DistrictPassSection,
+} from "./district-pass/SidebarLayout";
 import { PassCard } from "./district-pass/PassCard";
 import { SupportTab } from "./district-pass/SupportTab";
 
@@ -56,6 +60,33 @@ export function DistrictPass({
     toastTimer.current = setTimeout(() => setToast(null), 3200);
   };
 
+  // Shared section content — identical across the tabs and sidebar layouts.
+  const sections: DistrictPassSection[] = [
+    { value: "activity", label: "Activity", content: <ActivityList /> },
+    {
+      value: "devices",
+      label: "Devices",
+      content: <DevicesTab onToast={showToast} />,
+    },
+    {
+      value: "security",
+      label: "Security",
+      content: (
+        <div className="flex flex-col gap-8">
+          <AccountRows onToast={showToast} />
+          <DangerZone
+            onDeleted={() => showToast("Your account has been deleted.")}
+          />
+        </div>
+      ),
+    },
+    {
+      value: "support",
+      label: "Support",
+      content: <SupportTab onToast={showToast} />,
+    },
+  ];
+
   return (
     <div className="bg-surface isolate flex h-screen flex-col">
       <ProductHeader
@@ -75,7 +106,9 @@ export function DistrictPass({
 
       <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-4 py-16">
         <motion.div
-          className="flex w-full max-w-[480px] flex-col gap-8"
+          className={`flex w-full flex-col gap-8 ${
+            navigation === "sidebar" ? "max-w-[906px]" : "max-w-[480px]"
+          }`}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
@@ -89,45 +122,29 @@ export function DistrictPass({
             }}
           />
 
-          {navigation === "sidebar" ? (
-            <VariantPlaceholder label="Sidebar navigation" />
-          ) : settings !== "basic" ? (
+          {settings !== "basic" ? (
             <VariantPlaceholder label="This settings preset" />
+          ) : navigation === "sidebar" ? (
+            <SidebarLayout sections={sections} />
           ) : (
-          <Tabs.Root defaultValue="activity" className="gap-6">
-            <Tabs.List
-              aria-label="District Pass sections"
-              className="border-card-border w-full border-b"
-            >
-              <Tabs.Trigger value="activity">Activity</Tabs.Trigger>
-              <Tabs.Trigger value="devices">Devices</Tabs.Trigger>
-              <Tabs.Trigger value="security">Security</Tabs.Trigger>
-              <Tabs.Trigger value="support">Support</Tabs.Trigger>
-            </Tabs.List>
+            <Tabs.Root defaultValue="activity" className="gap-6">
+              <Tabs.List
+                aria-label="District Pass sections"
+                className="border-card-border w-full border-b"
+              >
+                {sections.map((section) => (
+                  <Tabs.Trigger key={section.value} value={section.value}>
+                    {section.label}
+                  </Tabs.Trigger>
+                ))}
+              </Tabs.List>
 
-            <Tabs.Content value="security">
-              <div className="flex flex-col gap-8">
-                <AccountRows onToast={showToast} />
-                <DangerZone
-                  onDeleted={() =>
-                    showToast("Your account has been deleted.")
-                  }
-                />
-              </div>
-            </Tabs.Content>
-
-            <Tabs.Content value="activity">
-              <ActivityList />
-            </Tabs.Content>
-
-            <Tabs.Content value="devices">
-              <DevicesTab onToast={showToast} />
-            </Tabs.Content>
-
-            <Tabs.Content value="support">
-              <SupportTab onToast={showToast} />
-            </Tabs.Content>
-          </Tabs.Root>
+              {sections.map((section) => (
+                <Tabs.Content key={section.value} value={section.value}>
+                  {section.content}
+                </Tabs.Content>
+              ))}
+            </Tabs.Root>
           )}
         </motion.div>
       </main>
