@@ -7,8 +7,8 @@ import { Dialog } from "@financedistrict/apps-ui/dialog";
 const CONFIRM_WORD = "DELETE";
 
 /**
- * Destructive-styled block at the very bottom of District Pass — no `Section`
- * wrapper since it carries its own red-tinted heading/border. Opens a
+ * Destructive-styled block at the bottom of the Security tab — no wrapper
+ * needed since it carries its own red-tinted heading/border. Opens a
  * confirmation `Dialog` that requires the user to type `DELETE` and enter a
  * password before the destructive confirm button enables. Deletion is
  * simulated: confirming just closes the dialog and calls `onDeleted` (the

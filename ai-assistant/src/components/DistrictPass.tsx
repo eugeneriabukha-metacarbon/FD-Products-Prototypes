@@ -1,15 +1,15 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { Tabs } from "@financedistrict/apps-ui/tabs";
 import { Toast } from "@financedistrict/apps-ui/toast";
 
 import districtPassIconDark from "../assets/app-district-pass-dark.svg";
 import { ProductHeader } from "./ProductHeader";
 import { AccountRows } from "./district-pass/AccountRows";
-import { ActivityLogPanel } from "./district-pass/ActivityLogPanel";
+import { ActivityList } from "./district-pass/ActivityList";
 import { DangerZone } from "./district-pass/DangerZone";
 import { PassCard } from "./district-pass/PassCard";
-import { SecurityActivity } from "./district-pass/SecurityActivity";
-import { Section } from "./district-pass/Section";
+import { SupportTab } from "./district-pass/SupportTab";
 
 export interface DistrictPassProps {
   /** Return to the Launchpad (the app-switcher button). */
@@ -22,11 +22,11 @@ export interface DistrictPassProps {
 
 /**
  * District Pass — the FD identity/account product. A hero `PassCard` (identity
- * + verification credential, with an editable display name) anchors a stack
- * of sections: Account details (Email / Password rows that expand in place
- * to edit), Recent activity (auth audit log with a "View all" Panel
- * slide-over), and a Danger zone (irreversible account deletion behind a
- * type-to-confirm Dialog). All actions are simulated and confirmed with a DS
+ * + verification credential, with an editable display name) anchors three DS
+ * `Tabs`: Security (Account details rows that expand in place to edit, plus a
+ * Danger zone — irreversible account deletion behind a type-to-confirm Dialog
+ * — at the bottom), Activity (the full auth audit log), and Support (Contact
+ * support / Help center). All actions are simulated and confirmed with a DS
  * Toast. Sibling of the AI Assistant.
  */
 export function DistrictPass({
@@ -35,7 +35,6 @@ export function DistrictPass({
   hasPaidPlan = false,
 }: DistrictPassProps) {
   const [toast, setToast] = React.useState<string | null>(null);
-  const [logOpen, setLogOpen] = React.useState(false);
   const [name, setName] = React.useState("Janno Jaerv");
   const toastTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -51,8 +50,6 @@ export function DistrictPass({
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(null), 3200);
   };
-
-  const handleCloseLog = React.useCallback(() => setLogOpen(false), []);
 
   return (
     <div className="bg-surface isolate flex h-screen flex-col">
@@ -80,21 +77,34 @@ export function DistrictPass({
             }}
           />
 
-          <Section title="Account details">
-            <AccountRows onToast={showToast} />
-          </Section>
+          <Tabs.Root defaultValue="security" className="gap-6">
+            <Tabs.List aria-label="District Pass sections">
+              <Tabs.Trigger value="security">Security</Tabs.Trigger>
+              <Tabs.Trigger value="activity">Activity</Tabs.Trigger>
+              <Tabs.Trigger value="support">Support</Tabs.Trigger>
+            </Tabs.List>
 
-          <Section title="Recent activity">
-            <SecurityActivity onViewAll={() => setLogOpen(true)} />
-          </Section>
+            <Tabs.Content value="security">
+              <div className="flex flex-col gap-8">
+                <AccountRows onToast={showToast} />
+                <DangerZone
+                  onDeleted={() =>
+                    showToast("Your account has been deleted.")
+                  }
+                />
+              </div>
+            </Tabs.Content>
 
-          <DangerZone
-            onDeleted={() => showToast("Your account has been deleted.")}
-          />
+            <Tabs.Content value="activity">
+              <ActivityList />
+            </Tabs.Content>
+
+            <Tabs.Content value="support">
+              <SupportTab onToast={showToast} />
+            </Tabs.Content>
+          </Tabs.Root>
         </motion.div>
       </main>
-
-      <ActivityLogPanel open={logOpen} onClose={handleCloseLog} />
 
       {/* Save confirmation — presentational DS Toast, auto-dismissed. */}
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4">
