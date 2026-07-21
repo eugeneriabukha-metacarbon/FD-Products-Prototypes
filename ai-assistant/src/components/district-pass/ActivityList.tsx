@@ -8,7 +8,7 @@ export function ActivityRow({ event }: { event: ActivityEvent }) {
       ? "text-success-primary-foreground"
       : "text-destructive-primary-foreground";
   return (
-    <li className="border-card-border flex items-center gap-3 border-b py-3">
+    <li className="border-card-border flex items-center gap-3 border-b py-3 last:border-b-0">
       <Icon
         size={18}
         weight="fill"
