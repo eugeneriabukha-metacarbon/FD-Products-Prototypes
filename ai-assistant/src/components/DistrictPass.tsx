@@ -7,7 +7,7 @@ import districtPassIconDark from "../assets/app-district-pass-dark.svg";
 import { ProductHeader } from "./ProductHeader";
 import { AccountRows } from "./district-pass/AccountRows";
 import { ActivityList } from "./district-pass/ActivityList";
-import { Configurator, VariantPlaceholder } from "./district-pass/Configurator";
+import { Configurator } from "./district-pass/Configurator";
 import { DangerZone } from "./district-pass/DangerZone";
 import { DevicesTab } from "./district-pass/DevicesTab";
 import { TwoFactorRow } from "./district-pass/TwoFactorRow";
@@ -45,7 +45,6 @@ export function DistrictPass({
   const [name, setName] = React.useState("Janno Jaerv");
   // Stakeholder preview axes, driven by the Configurator toolbar.
   const [navigation, setNavigation] = React.useState("tabs");
-  const [settings, setSettings] = React.useState("basic");
   // A Security card (Email / Password / 2FA) is mid-edit — locks the delete action.
   const [accountEditing, setAccountEditing] = React.useState(false);
   const [twoFactorEditing, setTwoFactorEditing] = React.useState(false);
@@ -113,12 +112,7 @@ export function DistrictPass({
         hasPaidPlan={hasPaidPlan}
       />
 
-      <Configurator
-        navigation={navigation}
-        settings={settings}
-        onNavigationChange={setNavigation}
-        onSettingsChange={setSettings}
-      />
+      <Configurator navigation={navigation} onNavigationChange={setNavigation} />
 
       <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-4 py-16">
         <motion.div
@@ -138,9 +132,7 @@ export function DistrictPass({
             }}
           />
 
-          {settings !== "basic" ? (
-            <VariantPlaceholder label="This settings preset" />
-          ) : navigation === "sidebar" ? (
+          {navigation === "sidebar" ? (
             <SidebarLayout sections={sections} />
           ) : (
             <Tabs.Root defaultValue="activity" className="gap-6">
