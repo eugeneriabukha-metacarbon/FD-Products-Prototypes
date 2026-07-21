@@ -97,7 +97,7 @@ export function DevicesTab({
       <Dialog.Root open={confirmOpen} onOpenChange={setConfirmOpen}>
         <div className="flex items-center justify-between gap-4">
           <p className="body-03 text-primary-foreground-muted">
-            This will end all active sessions except your current one.
+            This action will end all active sessions except your current one.
           </p>
           <Dialog.Trigger asChild>
             <Button
