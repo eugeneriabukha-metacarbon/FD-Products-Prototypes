@@ -14,8 +14,8 @@ export function SupportTab({
   onToast: (message: string) => void;
 }) {
   return (
-    <div className="border-card-border flex flex-col border-t">
-      <div className="border-card-border border-b">
+    <div className="flex flex-col">
+      <div className="border-card-border border-b last:border-b-0">
         <FeatureCard
           asChild
           title="Contact support"
@@ -29,7 +29,7 @@ export function SupportTab({
           />
         </FeatureCard>
       </div>
-      <div className="border-card-border border-b">
+      <div className="border-card-border border-b last:border-b-0">
         <FeatureCard
           asChild
           title="Help center"
