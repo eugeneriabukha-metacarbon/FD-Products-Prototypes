@@ -8,6 +8,7 @@ import {
 } from "@phosphor-icons/react";
 import { Button } from "@financedistrict/apps-ui/button";
 import { Dialog } from "@financedistrict/apps-ui/dialog";
+import { FeatureCard } from "@financedistrict/apps-ui/feature-card";
 import { DEVICES, type DeviceKind, type DeviceSession } from "./mockData";
 
 const DEVICE_ICON: Record<DeviceKind, typeof LaptopIcon> = {
@@ -60,44 +61,45 @@ export function DevicesTab({
           {[...devices]
             .sort((a, b) => (b.current ? 1 : 0) - (a.current ? 1 : 0))
             .map((device) => {
-            const Icon = DEVICE_ICON[device.kind];
-            return (
-              <li
-                key={device.id}
-                className="border-card-border flex items-center gap-3 border-b py-3 last:border-b-0"
-              >
-                <Icon
-                  size={20}
-                  className="text-primary-foreground-muted shrink-0"
-                  aria-hidden="true"
-                />
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <span className="text-primary-foreground truncate text-sm font-medium">
-                    {device.name}
-                  </span>
-                  <span className="body-03 text-primary-foreground-muted truncate">
-                    {device.browser} · {device.location}
-                  </span>
-                </div>
-                <span className="body-03 text-primary-foreground-muted shrink-0">
-                  {device.lastActive}
-                </span>
-                {device.current ? (
-                  // Reserve the X's footprint so the timestamps stay aligned.
-                  <span className="size-[18px] shrink-0" aria-hidden="true" />
-                ) : (
-                  <button
-                    type="button"
-                    aria-label={`Sign out ${device.name}`}
-                    onClick={() => signOut(device)}
-                    className={SIGN_OUT_BUTTON_CLASS}
-                  >
-                    <XIcon size={18} />
-                  </button>
-                )}
-              </li>
-            );
-          })}
+              const Icon = DEVICE_ICON[device.kind];
+              return (
+                <li
+                  key={device.id}
+                  className="border-card-border border-b last:border-b-0"
+                >
+                  <FeatureCard
+                    caret={false}
+                    leading={<Icon />}
+                    title={device.name}
+                    subtitle={`${device.browser} · ${device.location}`}
+                    trailing={
+                      <div className="flex items-center gap-2">
+                        <span className="body-03 whitespace-nowrap">
+                          {device.lastActive}
+                        </span>
+                        {device.current ? (
+                          // Reserve the X's footprint so timestamps stay aligned.
+                          <span
+                            className="size-4 shrink-0"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            aria-label={`Sign out ${device.name}`}
+                            onClick={() => signOut(device)}
+                            className={SIGN_OUT_BUTTON_CLASS}
+                          >
+                            {/* `size-4!` overrides FeatureCard's trailing `[&_svg]:size-6`. */}
+                            <XIcon className="size-4!" />
+                          </button>
+                        )}
+                      </div>
+                    }
+                  />
+                </li>
+              );
+            })}
         </ul>
       )}
 

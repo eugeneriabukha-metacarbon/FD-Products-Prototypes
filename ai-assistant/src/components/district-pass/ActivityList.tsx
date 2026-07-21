@@ -1,4 +1,5 @@
 import { CheckCircleIcon, XCircleIcon } from "@phosphor-icons/react";
+import { FeatureCard } from "@financedistrict/apps-ui/feature-card";
 import { ACTIVITY_EVENTS, type ActivityEvent } from "./mockData";
 
 export function ActivityRow({ event }: { event: ActivityEvent }) {
@@ -8,24 +9,16 @@ export function ActivityRow({ event }: { event: ActivityEvent }) {
       ? "text-success-primary-foreground"
       : "text-destructive-primary-foreground";
   return (
-    <li className="border-card-border flex items-center gap-3 border-b py-3 last:border-b-0">
-      <Icon
-        size={18}
-        weight="fill"
-        className={`shrink-0 ${color}`}
-        aria-hidden="true"
+    <li className="border-card-border border-b last:border-b-0">
+      <FeatureCard
+        caret={false}
+        leading={<Icon weight="fill" className={color} />}
+        title={event.label}
+        subtitle={`${event.device} · ${event.location}`}
+        trailing={
+          <span className="body-03 whitespace-nowrap">{event.time}</span>
+        }
       />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <span className="text-primary-foreground truncate text-sm font-medium">
-          {event.label}
-        </span>
-        <span className="body-03 text-primary-foreground-muted truncate">
-          {event.device} · {event.location}
-        </span>
-      </div>
-      <span className="body-03 text-primary-foreground-muted shrink-0">
-        {event.time}
-      </span>
     </li>
   );
 }
