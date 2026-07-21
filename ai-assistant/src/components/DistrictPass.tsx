@@ -7,6 +7,7 @@ import { ProductHeader } from "./ProductHeader";
 import { AccountRows } from "./district-pass/AccountRows";
 import { ActivityLogPanel } from "./district-pass/ActivityLogPanel";
 import { ConnectedApps } from "./district-pass/ConnectedApps";
+import { DangerZone } from "./district-pass/DangerZone";
 import { PassCard } from "./district-pass/PassCard";
 import { SecurityActivity } from "./district-pass/SecurityActivity";
 import { Section } from "./district-pass/Section";
@@ -87,6 +88,10 @@ export function DistrictPass({
           <Section title="Recent activity">
             <SecurityActivity onViewAll={() => setLogOpen(true)} />
           </Section>
+
+          <DangerZone
+            onDeleted={() => showToast("Your account has been deleted.")}
+          />
         </motion.div>
       </main>
 
