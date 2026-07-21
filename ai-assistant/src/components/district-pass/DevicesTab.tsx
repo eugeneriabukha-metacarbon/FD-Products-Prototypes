@@ -23,7 +23,7 @@ const SIGN_OUT_BUTTON_CLASS =
 /**
  * Devices tab — active signed-in sessions. Each row reuses the Activity-tab
  * row layout (leading icon · name · browser/location · last-active) plus a
- * trailing X to sign that device out. Below the list, an "End all sessions"
+ * trailing X to sign that device out. Below the list, an "End other sessions"
  * row (danger-zone layout: muted copy + destructive button) opens a
  * confirmation dialog and, on confirm, ends every session except the current
  * one. All actions are simulated and confirmed with a toast.
@@ -107,14 +107,14 @@ export function DevicesTab({
               className="shrink-0 whitespace-nowrap"
               disabled={otherSessions.length === 0}
             >
-              End all sessions
+              End other sessions
             </Button>
           </Dialog.Trigger>
         </div>
         <Dialog.Content>
           <Dialog.Header
             icon={<SignOutIcon weight="fill" />}
-            title="End all sessions?"
+            title="End other sessions?"
             description="This ends every active session except your current one. Those devices will need to sign in again."
             showClose
           />
@@ -129,7 +129,7 @@ export function DevicesTab({
               type="button"
               onClick={endAllOthers}
             >
-              End all sessions
+              End other sessions
             </Button>
           </Dialog.Footer>
         </Dialog.Content>
