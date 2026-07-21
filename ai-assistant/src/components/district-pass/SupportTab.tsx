@@ -14,7 +14,7 @@ export function SupportTab({
   onToast: (message: string) => void;
 }) {
   return (
-    <div className="flex flex-col">
+    <div className="border-card-border flex flex-col border-t">
       <div className="border-card-border border-b">
         <FeatureCard
           asChild
@@ -24,21 +24,25 @@ export function SupportTab({
         >
           <button
             type="button"
+            className="w-full text-left"
             onClick={() => onToast("Support request started.")}
           />
         </FeatureCard>
       </div>
-      <FeatureCard
-        asChild
-        title="Help center"
-        subtitle="Browse FAQs and guides."
-        leading={<QuestionIcon />}
-      >
-        <button
-          type="button"
-          onClick={() => onToast("Opening the help center…")}
-        />
-      </FeatureCard>
+      <div className="border-card-border border-b">
+        <FeatureCard
+          asChild
+          title="Help center"
+          subtitle="Browse FAQs and guides."
+          leading={<QuestionIcon />}
+        >
+          <button
+            type="button"
+            className="w-full text-left"
+            onClick={() => onToast("Opening the help center…")}
+          />
+        </FeatureCard>
+      </div>
     </div>
   );
 }
