@@ -10,6 +10,7 @@ import { ActivityList } from "./district-pass/ActivityList";
 import { Configurator, VariantPlaceholder } from "./district-pass/Configurator";
 import { DangerZone } from "./district-pass/DangerZone";
 import { DevicesTab } from "./district-pass/DevicesTab";
+import { TwoFactorRow } from "./district-pass/TwoFactorRow";
 import {
   SidebarLayout,
   type DistrictPassSection,
@@ -73,7 +74,10 @@ export function DistrictPass({
       label: "Security",
       content: (
         <div className="flex flex-col gap-8">
-          <AccountRows onToast={showToast} />
+          <div className="flex flex-col">
+            <AccountRows onToast={showToast} />
+            <TwoFactorRow onToast={showToast} />
+          </div>
           <DangerZone
             onDeleted={() => showToast("Your account has been deleted.")}
           />
