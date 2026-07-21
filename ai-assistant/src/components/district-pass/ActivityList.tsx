@@ -33,7 +33,7 @@ export function ActivityRow({ event }: { event: ActivityEvent }) {
 /** Full auth activity log — every `ACTIVITY_EVENTS` entry, newest first. */
 export function ActivityList() {
   return (
-    <ul className="border-card-border flex flex-col border-t">
+    <ul className="flex flex-col">
       {ACTIVITY_EVENTS.map((event) => (
         <ActivityRow key={event.id} event={event} />
       ))}
