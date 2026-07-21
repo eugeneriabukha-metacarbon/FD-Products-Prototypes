@@ -77,13 +77,13 @@ export function DistrictPass({
             }}
           />
 
-          <Tabs.Root defaultValue="security" className="gap-6">
+          <Tabs.Root defaultValue="activity" className="gap-6">
             <Tabs.List
               aria-label="District Pass sections"
               className="border-card-border w-full border-b"
             >
-              <Tabs.Trigger value="security">Security</Tabs.Trigger>
               <Tabs.Trigger value="activity">Activity</Tabs.Trigger>
+              <Tabs.Trigger value="security">Security</Tabs.Trigger>
               <Tabs.Trigger value="support">Support</Tabs.Trigger>
             </Tabs.List>
 
