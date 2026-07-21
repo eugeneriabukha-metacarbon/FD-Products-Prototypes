@@ -5,6 +5,8 @@ import { Toast } from "@financedistrict/apps-ui/toast";
 import districtPassIconDark from "../assets/app-district-pass-dark.svg";
 import { ProductHeader } from "./ProductHeader";
 import { AccountRows } from "./district-pass/AccountRows";
+import { PassCard } from "./district-pass/PassCard";
+import { CONNECTED_APPS } from "./district-pass/mockData";
 
 export interface DistrictPassProps {
   /** Return to the Launchpad (the app-switcher button). */
@@ -16,9 +18,10 @@ export interface DistrictPassProps {
 }
 
 /**
- * District Pass — the FD identity/account product. A single screen of
- * FeatureCard rows (Nickname / Email / Password); each expands in place into
- * an edit form (Edit → Cancel/Save, other rows' Edit disabled while editing).
+ * District Pass — the FD identity/account product. A hero `PassCard`
+ * (identity + verification credential) sits above a section of FeatureCard
+ * rows (Nickname / Email / Password); each row expands in place into an edit
+ * form (Edit → Cancel/Save, other rows' Edit disabled while editing).
  * Saves are simulated and confirmed with a DS Toast. Sibling of the AI Assistant.
  */
 export function DistrictPass({
@@ -59,14 +62,11 @@ export function DistrictPass({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         >
-          <div className="flex flex-col gap-2">
-            <h1 className="display-03 text-primary-foreground">
-              District Pass
-            </h1>
-            <p className="body-03 text-primary-foreground-muted">
-              Manage your Finance District identity.
-            </p>
-          </div>
+          <PassCard
+            name="Janno Jaerv"
+            initials="JJ"
+            connectedCount={CONNECTED_APPS.length}
+          />
 
           <AccountRows onToast={showToast} />
         </motion.div>
