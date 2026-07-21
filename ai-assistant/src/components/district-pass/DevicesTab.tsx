@@ -57,7 +57,9 @@ export function DevicesTab({
         </p>
       ) : (
         <ul className="flex flex-col">
-          {devices.map((device) => {
+          {[...devices]
+            .sort((a, b) => (b.current ? 1 : 0) - (a.current ? 1 : 0))
+            .map((device) => {
             const Icon = DEVICE_ICON[device.kind];
             return (
               <li
@@ -80,14 +82,16 @@ export function DevicesTab({
                 <span className="body-03 text-primary-foreground-muted shrink-0">
                   {device.lastActive}
                 </span>
-                <button
-                  type="button"
-                  aria-label={`Sign out ${device.name}`}
-                  onClick={() => signOut(device)}
-                  className={SIGN_OUT_BUTTON_CLASS}
-                >
-                  <XIcon size={18} />
-                </button>
+                {!device.current && (
+                  <button
+                    type="button"
+                    aria-label={`Sign out ${device.name}`}
+                    onClick={() => signOut(device)}
+                    className={SIGN_OUT_BUTTON_CLASS}
+                  >
+                    <XIcon size={18} />
+                  </button>
+                )}
               </li>
             );
           })}

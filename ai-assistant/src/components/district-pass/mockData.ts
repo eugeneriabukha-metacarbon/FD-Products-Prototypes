@@ -91,7 +91,7 @@ export const DEVICES: DeviceSession[] = [
   },
   {
     id: "d2",
-    name: "MacBook Pro (this device)",
+    name: "MacBook Pro (current session)",
     browser: "Chrome",
     location: "Tallinn, EE",
     lastActive: "Jul 19, 03:11",
