@@ -20,7 +20,7 @@ export function SidebarLayout({ sections }: { sections: DistrictPassSection[] })
     <div className="flex gap-8">
       <nav
         aria-label="District Pass sections"
-        className="flex w-[202px] shrink-0 flex-col gap-1"
+        className="flex w-[202px] shrink-0 flex-col"
       >
         {sections.map((section) => {
           const isActive = section.value === active;
@@ -30,7 +30,7 @@ export function SidebarLayout({ sections }: { sections: DistrictPassSection[] })
               type="button"
               aria-current={isActive ? "page" : undefined}
               onClick={() => setActive(section.value)}
-              className={`focus-visible:outline-focus cursor-pointer rounded-xs border-l-2 px-4 py-3 text-left text-sm font-medium outline-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid ${
+              className={`focus-visible:outline-focus flex h-9 cursor-pointer items-center rounded-xs border-l-2 px-3 text-left text-sm font-medium outline-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid ${
                 isActive
                   ? "border-l-[#6b1cbb] bg-[#f0e8ff] text-brand-primary-foreground"
                   : "border-l-transparent text-primary-foreground-muted hover:bg-[#fafafa] hover:text-primary-foreground"
