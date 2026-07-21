@@ -30,10 +30,10 @@ export function SidebarLayout({ sections }: { sections: DistrictPassSection[] })
               type="button"
               aria-current={isActive ? "page" : undefined}
               onClick={() => setActive(section.value)}
-              className={`focus-visible:outline-focus cursor-pointer rounded-sm px-4 py-3 text-left text-sm font-medium outline-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid ${
+              className={`focus-visible:outline-focus cursor-pointer rounded-xs border-l-2 px-4 py-3 text-left text-sm font-medium outline-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid ${
                 isActive
-                  ? "bg-[#f0e8ff] text-brand-primary-foreground"
-                  : "text-primary-foreground-muted hover:text-primary-foreground"
+                  ? "border-l-[#6b1cbb] bg-[#f0e8ff] text-brand-primary-foreground"
+                  : "border-l-transparent text-primary-foreground-muted hover:bg-[#fafafa] hover:text-primary-foreground"
               }`}
             >
               {section.label}
