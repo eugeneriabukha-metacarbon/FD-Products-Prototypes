@@ -40,7 +40,7 @@ export function DangerZone({ onDeleted }: { onDeleted: () => void }) {
   return (
     <div className="border-destructive-primary-foreground/40 flex flex-col gap-3 rounded-sm border p-4">
       <div className="flex flex-col gap-1">
-        <h2 className="text-destructive-primary-foreground text-base font-semibold">
+        <h2 className="display-04 text-destructive-primary-foreground">
           Danger zone
         </h2>
         <p className="body-03 text-primary-foreground-muted">
