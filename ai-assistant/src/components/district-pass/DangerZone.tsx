@@ -7,8 +7,9 @@ import { Dialog } from "@financedistrict/apps-ui/dialog";
 const CONFIRM_WORD = "DELETE";
 
 /**
- * Destructive-styled block at the bottom of the Security tab — no wrapper
- * needed since it carries its own red-tinted heading/border. Opens a
+ * Account-deletion row at the bottom of the Security tab: a muted description
+ * on the left and a destructive "Delete account" button on the right (no
+ * bordered box, no heading — per Figma 549:43866). The button opens a
  * confirmation `Dialog` that requires the user to type `DELETE` and enter a
  * password before the destructive confirm button enables. Deletion is
  * simulated: confirming just closes the dialog and calls `onDeleted` (the
@@ -38,23 +39,23 @@ export function DangerZone({ onDeleted }: { onDeleted: () => void }) {
   };
 
   return (
-    <div className="border-destructive-primary-foreground/40 flex flex-col gap-3 rounded-sm border p-4">
-      <div className="flex flex-col gap-1">
-        <h2 className="display-04 text-destructive-primary-foreground">
-          Danger zone
-        </h2>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
+      <div className="flex items-center justify-between gap-4">
         <p className="body-03 text-primary-foreground-muted">
           Deleting your District Pass is permanent and cannot be undone.
         </p>
+        <Dialog.Trigger asChild>
+          <Button
+            variation="destructive"
+            size="sm"
+            type="button"
+            className="shrink-0 whitespace-nowrap"
+          >
+            Delete account
+          </Button>
+        </Dialog.Trigger>
       </div>
-      <div>
-        <Dialog.Root open={open} onOpenChange={handleOpenChange}>
-          <Dialog.Trigger asChild>
-            <Button variation="destructive" size="sm" type="button">
-              Delete account
-            </Button>
-          </Dialog.Trigger>
-          <Dialog.Content>
+      <Dialog.Content>
             <Dialog.Header
               icon={<WarningIcon weight="fill" />}
               title="Delete your District Pass?"
@@ -91,9 +92,7 @@ export function DangerZone({ onDeleted }: { onDeleted: () => void }) {
                 Delete account
               </Button>
             </Dialog.Footer>
-          </Dialog.Content>
-        </Dialog.Root>
-      </div>
-    </div>
+        </Dialog.Content>
+      </Dialog.Root>
   );
 }
