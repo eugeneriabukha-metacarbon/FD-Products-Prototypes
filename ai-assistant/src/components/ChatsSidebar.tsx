@@ -18,8 +18,8 @@ export interface ChatListItem {
   pinned?: boolean;
 }
 
-/** Drag-resize bounds for the bg rail (user requirement: 160–320, default 244). */
-const SIDEBAR_MIN_WIDTH = 160;
+/** Drag-resize bounds for the bg rail (user requirement: 180–320, default 244). */
+const SIDEBAR_MIN_WIDTH = 180;
 const SIDEBAR_MAX_WIDTH = 320;
 const SIDEBAR_DEFAULT_WIDTH = 244;
 
@@ -49,6 +49,12 @@ interface ChatRowProps {
   onTogglePin: (id: string) => void;
   onRename: (id: string, title: string) => void;
   onDelete: (id: string) => void;
+  /**
+   * Enable framer `layout` animation (pin/unpin reorder). Off while the rail
+   * is being drag-resized — otherwise every width change springs behind the
+   * cursor instead of tracking it.
+   */
+  animateLayout?: boolean;
 }
 
 /** Shared menu-item style for the row's more-menu. */
@@ -67,6 +73,7 @@ function ChatRow({
   onTogglePin,
   onRename,
   onDelete,
+  animateLayout = true,
 }: ChatRowProps) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [editing, setEditing] = React.useState(false);
@@ -105,7 +112,7 @@ function ChatRow({
 
   return (
     <motion.div
-      layout
+      layout={animateLayout}
       initial={{ opacity: 0, x: -8 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -8 }}
@@ -227,6 +234,8 @@ interface ChatSectionProps {
   onTogglePin: (id: string) => void;
   onRenameChat: (id: string, title: string) => void;
   onDeleteChat: (id: string) => void;
+  /** Forwarded to the rows — off while the rail is being drag-resized. */
+  animateLayout?: boolean;
 }
 
 /** A collapsible titled group of chat rows ("pinned" / "recent" accordions). */
@@ -238,6 +247,7 @@ function ChatSection({
   onTogglePin,
   onRenameChat,
   onDeleteChat,
+  animateLayout = true,
 }: ChatSectionProps) {
   const [expanded, setExpanded] = React.useState(true);
 
@@ -282,6 +292,7 @@ function ChatSection({
                     onTogglePin={onTogglePin}
                     onRename={onRenameChat}
                     onDelete={onDeleteChat}
+                    animateLayout={animateLayout}
                   />
                 ))}
               </AnimatePresence>
@@ -308,8 +319,11 @@ export function ChatsSidebar({
   const pinned = chats.filter((chat) => chat.pinned);
   const recent = chats.filter((chat) => !chat.pinned);
   const [collapsed, setCollapsed] = React.useState(false);
-  // Drag-resizable width for the bg rail (Figma default 244; clamped 160–320).
+  // Drag-resizable width for the bg rail (Figma default 244; clamped 200–320).
   const [width, setWidth] = React.useState(SIDEBAR_DEFAULT_WIDTH);
+  // While true, the rows' framer `layout` animations are OFF so the list
+  // tracks the cursor 1:1 instead of spring-lagging behind the drag.
+  const [resizing, setResizing] = React.useState(false);
 
   const handleResizeStart = (event: React.PointerEvent<HTMLDivElement>) => {
     const startX = event.clientX;
@@ -322,6 +336,7 @@ export function ChatsSidebar({
     } catch {
       /* drag still works while the cursor stays over the handle */
     }
+    setResizing(true);
     const onMove = (e: PointerEvent) => {
       setWidth(
         Math.min(
@@ -331,6 +346,7 @@ export function ChatsSidebar({
       );
     };
     const onUp = () => {
+      setResizing(false);
       handle.removeEventListener("pointermove", onMove);
       handle.removeEventListener("pointerup", onUp);
     };
@@ -420,15 +436,22 @@ export function ChatsSidebar({
         </div>
       )}
 
-      {/* Drag handle — resize the bg rail from its right edge (160–320px). */}
+      {/* Drag handle — resize the bg rail from its right edge (180–320px).
+          The 8px strip is the grab area; the visible hover indicator is a
+          centered 4px bar. */}
       {showBackground && !collapsed && (
         <div
           role="separator"
           aria-orientation="vertical"
           aria-label="Resize sidebar"
           onPointerDown={handleResizeStart}
-          className="hover:bg-brand-primary-background absolute inset-y-0 -right-1 w-2 cursor-col-resize rounded-full transition-colors"
-        />
+          className="group/resize absolute inset-y-0 -right-1 flex w-2 cursor-col-resize justify-center"
+        >
+          <div
+            aria-hidden="true"
+            className="group-hover/resize:bg-brand-primary-background h-full w-1 rounded-full transition-colors"
+          />
+        </div>
       )}
 
       {/* Chat list — hidden while collapsed (`hidden` beats an absent `flex`). */}
@@ -439,7 +462,7 @@ export function ChatsSidebar({
           {pinned.length > 0 && (
             <motion.div
               key="pinned-section"
-              layout
+              layout={!resizing}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -454,11 +477,12 @@ export function ChatsSidebar({
                 onTogglePin={onTogglePin}
                 onRenameChat={onRenameChat}
                 onDeleteChat={onDeleteChat}
+                animateLayout={!resizing}
               />
             </motion.div>
           )}
         </AnimatePresence>
-        <motion.div layout className="w-full">
+        <motion.div layout={!resizing} className="w-full">
           <ChatSection
             label="chats"
             chats={recent}
@@ -467,6 +491,7 @@ export function ChatsSidebar({
             onTogglePin={onTogglePin}
             onRenameChat={onRenameChat}
             onDeleteChat={onDeleteChat}
+            animateLayout={!resizing}
           />
         </motion.div>
       </div>
