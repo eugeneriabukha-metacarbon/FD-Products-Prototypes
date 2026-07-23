@@ -31,6 +31,7 @@ import { Paywall, type PlanId } from "./components/Paywall";
 import { QuickActions } from "./components/QuickActions";
 import { Launchpad } from "./components/Launchpad";
 import { DistrictPass } from "./components/DistrictPass";
+import { MemoryDialog } from "./components/MemoryDialog";
 
 /** Top-level screen. The assistant is the default; the Launchpad is the app
  *  switcher reached from the header, and District Pass is a coming-soon stub. */
@@ -48,6 +49,10 @@ export default function App() {
   const [typing, setTyping] = React.useState(false);
   const [attachments, setAttachments] = React.useState<Attachment[]>([]);
   const [paywallOpen, setPaywallOpen] = React.useState(false);
+  // Memory settings — opened from the sidebar footer as a modal Dialog.
+  // `memoryEnabled` is lifted here so the sidebar item can label its state.
+  const [memoryDialogOpen, setMemoryDialogOpen] = React.useState(false);
+  const [memoryEnabled, setMemoryEnabled] = React.useState(true);
   const [currentPlan, setCurrentPlan] = React.useState<PlanId>("free");
   // Cancelled = still on the paid plan until the billing period ends (the
   // manage view shows the pending-Free card), cleared by picking a plan again.
@@ -290,6 +295,8 @@ export default function App() {
           onDeleteChat={handleDeleteChat}
           showBackground={assistantConfig.sidebarBackground}
           backgroundColor={assistantConfig.sidebarBackgroundColor}
+          onOpenMemory={() => setMemoryDialogOpen(true)}
+          memoryEnabled={memoryEnabled}
         />
 
         {activeChat ? (
@@ -363,6 +370,14 @@ export default function App() {
 
       {/* Stakeholder-only preview panel (bottom-right, collapsible). */}
       <Configurator config={assistantConfig} onChange={setAssistantConfig} />
+
+      {/* Memory settings as a modal — the sidebar-footer entry point. */}
+      <MemoryDialog
+        open={memoryDialogOpen}
+        onOpenChange={setMemoryDialogOpen}
+        enabled={memoryEnabled}
+        onEnabledChange={setMemoryEnabled}
+      />
     </div>
   );
 }

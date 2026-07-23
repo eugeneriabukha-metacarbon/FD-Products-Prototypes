@@ -1,6 +1,7 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
+  BrainIcon,
   CaretDownIcon,
   DotsThreeIcon,
   MagnifyingGlassIcon,
@@ -127,6 +128,10 @@ export interface ChatsSidebarProps {
   showBackground?: boolean;
   /** Surface used when `showBackground` — beige (gray-50) or white. */
   backgroundColor?: "beige" | "white";
+  /** Open the Memory settings dialog (sidebar-footer entry point). */
+  onOpenMemory?: () => void;
+  /** Memory on/off — reflected in the footer item label ("Memory (on/off)"). */
+  memoryEnabled?: boolean;
 }
 
 interface ChatRowProps {
@@ -407,7 +412,10 @@ export function ChatsSidebar({
   onDeleteChat,
   showBackground = false,
   backgroundColor = "beige",
+  onOpenMemory,
+  memoryEnabled = true,
 }: ChatsSidebarProps) {
+  const memoryStateLabel = `Memory (${memoryEnabled ? "on" : "off"})`;
   const pinned = chats.filter((chat) => chat.pinned);
   const recent = chats.filter((chat) => !chat.pinned);
   const [collapsed, setCollapsed] = React.useState(false);
@@ -598,26 +606,27 @@ export function ChatsSidebar({
       )}
 
       {/* Drag handle — resize the bg rail from its right edge (180–320px).
-          The 8px strip is the grab area; the visible hover indicator is a
-          centered 4px bar. */}
+          The grab strip spans the FULL height (hover anywhere on the edge to
+          resize); the visible hover indicator is a short 64px centered 4px bar. */}
       {showBackground && !collapsed && (
         <div
           role="separator"
           aria-orientation="vertical"
           aria-label="Resize sidebar"
           onPointerDown={handleResizeStart}
-          className="group/resize absolute inset-y-0 -right-1 flex w-2 cursor-col-resize justify-center"
+          className="group/resize absolute inset-y-0 -right-1 flex w-2 cursor-col-resize items-center justify-center"
         >
           <div
             aria-hidden="true"
-            className="group-hover/resize:bg-brand-primary-background h-full w-1 rounded-full transition-colors"
+            className="group-hover/resize:bg-brand-primary-background h-16 w-1 rounded-full transition-colors"
           />
         </div>
       )}
 
-      {/* Chat list — hidden while collapsed (`hidden` beats an absent `flex`). */}
+      {/* Chat list — hidden while collapsed (`hidden` beats an absent `flex`).
+          `flex-1` so it fills the space and pins the Memory footer to the bottom. */}
       <div
-        className={`${collapsed ? "hidden" : "flex"} min-h-0 w-full flex-col gap-4 overflow-y-auto`}
+        className={`${collapsed ? "hidden" : "flex"} min-h-0 w-full flex-1 flex-col gap-4 overflow-y-auto`}
       >
         {searching ? (
           // Search results — flat list (pinned matches first), query highlighted.
@@ -685,6 +694,34 @@ export function ChatsSidebar({
           </>
         )}
       </div>
+
+      {/* Memory — pinned to the very bottom (`mt-auto`); full row when expanded,
+          icon-only in the collapsed rail. Opens the Memory settings dialog. */}
+      {onOpenMemory &&
+        (collapsed ? (
+          <Button
+            variation="ghost"
+            size="sm"
+            iconOnly
+            aria-label={memoryStateLabel}
+            onClick={onOpenMemory}
+            className="mt-auto"
+          >
+            <BrainIcon aria-hidden="true" />
+          </Button>
+        ) : (
+          <button
+            type="button"
+            onClick={onOpenMemory}
+            // Divider above only on the bg rail; the transparent overlay drops it.
+            className={`group/mem text-primary-foreground-muted hover:text-primary-foreground focus-visible:outline-focus mt-auto flex w-full shrink-0 cursor-pointer items-center gap-2 rounded-xs pt-4 text-left outline-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid ${
+              showBackground ? "border-card-border border-t" : ""
+            }`}
+          >
+            <BrainIcon size={16} aria-hidden="true" className="shrink-0" />
+            <span className="body-03">{memoryStateLabel}</span>
+          </button>
+        ))}
     </aside>
   );
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { RocketLaunchIcon, SignOutIcon } from "@phosphor-icons/react";
+import { BrainIcon, RocketLaunchIcon, SignOutIcon } from "@phosphor-icons/react";
 
 export interface ProfileMenuProps {
   /** Open the paywall (the plans menu item). */
@@ -12,6 +12,11 @@ export interface ProfileMenuProps {
    * header button instead (AI Assistant); on elsewhere (District Pass, Launchpad).
    */
   showUpgradeItem?: boolean;
+  /**
+   * Open the assistant's Memory settings screen. The item renders only when
+   * provided (AI Assistant only).
+   */
+  onOpenMemory?: () => void;
 }
 
 /**
@@ -22,6 +27,7 @@ export function ProfileMenu({
   onUpgrade,
   hasPaidPlan = false,
   showUpgradeItem = true,
+  onOpenMemory,
 }: ProfileMenuProps) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -83,6 +89,26 @@ export function ProfileMenu({
                 />
                 <span className="body-03 text-card-foreground whitespace-nowrap">
                   {hasPaidPlan ? "View plans" : "Upgrade your plan"}
+                </span>
+              </button>
+            )}
+            {onOpenMemory && (
+              <button
+                type="button"
+                role="menuitem"
+                className="hover:bg-card-accent flex w-full cursor-pointer items-center gap-1 py-2 pr-12 pl-4 text-left"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onOpenMemory();
+                }}
+              >
+                <BrainIcon
+                  size={16}
+                  className="text-card-foreground-muted shrink-0"
+                  aria-hidden="true"
+                />
+                <span className="body-03 text-card-foreground whitespace-nowrap">
+                  Memory
                 </span>
               </button>
             )}

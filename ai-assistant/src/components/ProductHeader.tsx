@@ -18,6 +18,8 @@ export interface ProductHeaderProps {
   rightAction?: React.ReactNode;
   /** Forwarded to the profile menu: show the plans item there (default true). */
   showUpgradeInMenu?: boolean;
+  /** Forwarded to the profile menu: Memory settings item (AI Assistant only). */
+  onOpenMemory?: () => void;
 }
 
 /**
@@ -33,6 +35,7 @@ export function ProductHeader({
   hasPaidPlan = false,
   rightAction,
   showUpgradeInMenu = true,
+  onOpenMemory,
 }: ProductHeaderProps) {
   return (
     <header className="z-10 flex w-full shrink-0 items-center justify-between p-4">
@@ -72,6 +75,7 @@ export function ProductHeader({
           onUpgrade={onUpgrade}
           hasPaidPlan={hasPaidPlan}
           showUpgradeItem={showUpgradeInMenu}
+          onOpenMemory={onOpenMemory}
         />
       </div>
     </header>
