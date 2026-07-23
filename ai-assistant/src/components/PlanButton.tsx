@@ -1,4 +1,4 @@
-import { ListChecksIcon, RocketLaunchIcon } from "@phosphor-icons/react";
+import { ArrowCircleUpIcon, ListChecksIcon } from "@phosphor-icons/react";
 import { Button } from "@financedistrict/apps-ui/button";
 
 export interface PlanButtonProps {
@@ -10,9 +10,9 @@ export interface PlanButtonProps {
 
 /**
  * Header plan button (AI Assistant). Free → a dark primary "Upgrade plan" with a
- * trailing rocket; paid → a secondary "Manage plans" with a leading checklist.
- * Relocated here from the profile dropdown; the DS Button's cut corners match
- * Figma 574:92753.
+ * leading arrow-circle-up; paid → a secondary "Manage plans" with a leading
+ * checklist. Relocated here from the profile dropdown; the DS Button's cut
+ * corners match Figma 574:92753.
  */
 export function PlanButton({ hasPaidPlan = false, onClick }: PlanButtonProps) {
   if (hasPaidPlan) {
@@ -35,7 +35,7 @@ export function PlanButton({ hasPaidPlan = false, onClick }: PlanButtonProps) {
       size="sm"
       type="button"
       onClick={onClick}
-      rightSlot={<RocketLaunchIcon />}
+      leftSlot={<ArrowCircleUpIcon />}
     >
       Upgrade plan
     </Button>
