@@ -1,8 +1,9 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  CaretUpIcon,
+  CaretDownIcon,
   DotsThreeIcon,
+  MagnifyingGlassIcon,
   NotePencilIcon,
   PencilSimpleIcon,
   PushPinIcon,
@@ -11,17 +12,103 @@ import {
   TrashIcon,
 } from "@phosphor-icons/react";
 import { Button } from "@financedistrict/apps-ui/button";
+import { SearchBar } from "@financedistrict/apps-ui/search-bar";
 
 export interface ChatListItem {
   id: string;
   title: string;
   pinned?: boolean;
+  /** Chat messages — searched by the sidebar (only plain-`text` entries). */
+  messages?: { text?: string }[];
 }
 
 /** Drag-resize bounds for the bg rail (user requirement: 180–320, default 244). */
 const SIDEBAR_MIN_WIDTH = 180;
 const SIDEBAR_MAX_WIDTH = 320;
 const SIDEBAR_DEFAULT_WIDTH = 244;
+
+/**
+ * Render `text` with every case-insensitive occurrence of `query` wrapped in a
+ * brand-tinted `<mark>` (browser default mark styling overridden).
+ */
+function HighlightText({ text, query }: { text: string; query: string }) {
+  const q = query.trim();
+  if (!q) return <>{text}</>;
+  const lower = text.toLowerCase();
+  const ql = q.toLowerCase();
+  const parts: React.ReactNode[] = [];
+  let i = 0;
+  while (i <= text.length) {
+    const idx = lower.indexOf(ql, i);
+    if (idx === -1) {
+      parts.push(text.slice(i));
+      break;
+    }
+    if (idx > i) parts.push(text.slice(i, idx));
+    parts.push(
+      <mark
+        key={idx}
+        className="bg-brand-primary-background rounded-[2px] text-inherit"
+      >
+        {text.slice(idx, idx + q.length)}
+      </mark>,
+    );
+    i = idx + q.length;
+  }
+  return <>{parts}</>;
+}
+
+/** A one-line message excerpt centered on the first `query` match. */
+function makeSnippet(text: string, query: string): string {
+  const idx = text.toLowerCase().indexOf(query.toLowerCase());
+  const start = Math.max(0, idx - 24);
+  const end = Math.min(text.length, idx + query.length + 48);
+  return `${start > 0 ? "…" : ""}${text.slice(start, end)}${
+    end < text.length ? "…" : ""
+  }`;
+}
+
+/**
+ * A search-result row — select-only (no pin/rename/delete). The matched text is
+ * the primary line in full foreground with the query highlighted: the chat
+ * title for title matches, or the message quote for content matches — the
+ * latter with a 12px chat name underneath to say where the quote is from.
+ */
+function SearchResultRow({
+  chat,
+  snippet,
+  query,
+  active,
+  onSelect,
+}: {
+  chat: ChatListItem;
+  snippet?: string;
+  query: string;
+  active: boolean;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(chat.id)}
+      aria-current={active || undefined}
+      className="focus-visible:outline-focus w-full min-w-0 cursor-pointer rounded-xs text-left outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
+    >
+      <span
+        className={`${
+          active ? "body-03-medium" : "body-03"
+        } text-primary-foreground block w-full truncate`}
+      >
+        <HighlightText text={snippet ?? chat.title} query={query} />
+      </span>
+      {snippet && (
+        <span className="body-04 text-primary-foreground-muted block w-full truncate">
+          {chat.title}
+        </span>
+      )}
+    </button>
+  );
+}
 
 export interface ChatsSidebarProps {
   chats: ChatListItem[];
@@ -160,7 +247,9 @@ function ChatRow({
       {!editing && (
         <div
           className={`${
-            menuOpen ? "flex" : "hidden group-focus-within/row:flex group-hover/row:flex"
+            menuOpen
+              ? "flex"
+              : "hidden group-focus-within/row:flex group-hover/row:flex"
           } shrink-0 items-center gap-1`}
         >
           <motion.button
@@ -253,22 +342,25 @@ function ChatSection({
 
   return (
     <div className="flex w-full flex-col">
+      {/* Accordion title (Figma 566:40627): leading 12px caret (right when
+          collapsed, down when expanded) + uppercase caption; muted at rest,
+          full foreground on hover/focus, focus ring on the row. */}
       <button
         type="button"
         onClick={() => setExpanded((open) => !open)}
         aria-expanded={expanded}
-        className="focus-visible:outline-focus flex shrink-0 cursor-pointer items-center gap-1 rounded-xs outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
+        className="group/acc focus-visible:outline-focus flex shrink-0 cursor-pointer items-center gap-1 rounded-[3px] outline-none focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-solid"
       >
-        <span className="caption-02-medium text-primary-foreground-muted uppercase">
+        <motion.span
+          animate={{ rotate: expanded ? 0 : -90 }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          className="text-primary-foreground-muted group-hover/acc:text-primary-foreground group-focus-visible/acc:text-primary-foreground flex transition-colors"
+        >
+          <CaretDownIcon size={12} weight="fill" aria-hidden="true" />
+        </motion.span>
+        <span className="caption-02-medium text-primary-foreground-muted group-hover/acc:text-primary-foreground group-focus-visible/acc:text-primary-foreground uppercase transition-colors">
           {label}
         </span>
-        <motion.span
-          animate={{ rotate: expanded ? 0 : 180 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="text-primary-foreground-muted flex"
-        >
-          <CaretUpIcon size={12} weight="fill" aria-hidden="true" />
-        </motion.span>
       </button>
 
       <AnimatePresence initial={false}>
@@ -319,6 +411,39 @@ export function ChatsSidebar({
   const pinned = chats.filter((chat) => chat.pinned);
   const recent = chats.filter((chat) => !chat.pinned);
   const [collapsed, setCollapsed] = React.useState(false);
+  // Sidebar search (debounced via the DS SearchBar). Non-empty query swaps the
+  // pinned/chats sections for a flat highlighted results list.
+  const [query, setQuery] = React.useState("");
+  const asideRef = React.useRef<HTMLElement>(null);
+  // Set by the collapsed rail's search button: after expanding, focus the
+  // freshly-mounted search field so the user can type immediately.
+  const focusSearchOnExpand = React.useRef(false);
+  React.useEffect(() => {
+    if (collapsed || !focusSearchOnExpand.current) return;
+    focusSearchOnExpand.current = false;
+    asideRef.current
+      ?.querySelector<HTMLInputElement>('input[aria-label="Search chats"]')
+      ?.focus();
+  }, [collapsed]);
+  const q = query.trim();
+  const searching = q.length > 0;
+  const results = searching
+    ? chats
+        .flatMap((chat) => {
+          // Message-content match wins so every result reads the same way —
+          // quote + source chat name; a plain title row only remains for
+          // chats matched solely by their title.
+          const message = chat.messages?.find((m) =>
+            m.text?.toLowerCase().includes(q.toLowerCase()),
+          );
+          if (message?.text)
+            return [{ chat, snippet: makeSnippet(message.text, q) }];
+          if (chat.title.toLowerCase().includes(q.toLowerCase()))
+            return [{ chat, snippet: undefined as string | undefined }];
+          return [];
+        })
+        .sort((a, b) => (b.chat.pinned ? 1 : 0) - (a.chat.pinned ? 1 : 0))
+    : [];
   // Drag-resizable width for the bg rail (Figma default 244; clamped 200–320).
   const [width, setWidth] = React.useState(SIDEBAR_DEFAULT_WIDTH);
   // While true, the rows' framer `layout` animations are OFF so the list
@@ -374,6 +499,7 @@ export function ChatsSidebar({
 
   return (
     <aside
+      ref={asideRef}
       style={widthStyle}
       className={`${surfaceClass} ${widthClass} flex flex-col items-start gap-4 p-4`}
     >
@@ -402,6 +528,19 @@ export function ChatsSidebar({
           >
             <NotePencilIcon aria-hidden="true" />
           </Button>
+          <Button
+            variation="secondary"
+            size="sm"
+            iconOnly
+            aria-label="Search chats"
+            onClick={() => {
+              // Expand and drop the caret into the search field.
+              focusSearchOnExpand.current = true;
+              setCollapsed(false);
+            }}
+          >
+            <MagnifyingGlassIcon aria-hidden="true" />
+          </Button>
         </div>
       ) : (
         // Expanded header: new-chat button + trailing collapse toggle.
@@ -428,12 +567,34 @@ export function ChatsSidebar({
             iconOnly
             aria-label="Collapse sidebar"
             aria-expanded
-            onClick={() => setCollapsed(true)}
+            onClick={() => {
+              setCollapsed(true);
+              // The search field unmounts with the expanded header — reset the
+              // query so re-expanding shows the normal sections again.
+              setQuery("");
+            }}
             className="shrink-0"
           >
             <SidebarSimpleIcon className="-scale-x-100" aria-hidden="true" />
           </Button>
         </div>
+      )}
+
+      {/* Sidebar search — filters titles + message content as you type. On the
+          beige rail the field's gray-50 fill would melt into the surface, so it
+          swaps to a white fill there. */}
+      {!collapsed && (
+        <SearchBar
+          placeholder="Search..."
+          aria-label="Search chats"
+          onSearch={setQuery}
+          wrapperClassName="w-full"
+          fieldClassName={
+            showBackground && backgroundColor === "beige"
+              ? "bg-card-background"
+              : undefined
+          }
+        />
       )}
 
       {/* Drag handle — resize the bg rail from its right edge (180–320px).
@@ -458,20 +619,61 @@ export function ChatsSidebar({
       <div
         className={`${collapsed ? "hidden" : "flex"} min-h-0 w-full flex-col gap-4 overflow-y-auto`}
       >
-        <AnimatePresence initial={false}>
-          {pinned.length > 0 && (
-            <motion.div
-              key="pinned-section"
-              layout={!resizing}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="w-full"
-            >
+        {searching ? (
+          // Search results — flat list (pinned matches first), query highlighted.
+          <div className="flex w-full flex-col">
+            <span className="caption-02-medium text-primary-foreground-muted uppercase">
+              results
+            </span>
+            {results.length === 0 ? (
+              <p className="body-03 text-primary-foreground-muted pt-3">
+                No chats found.
+              </p>
+            ) : (
+              <div className="flex flex-col gap-3 pt-3">
+                {results.map(({ chat, snippet }) => (
+                  <SearchResultRow
+                    key={chat.id}
+                    chat={chat}
+                    snippet={snippet}
+                    query={q}
+                    active={chat.id === activeChatId}
+                    onSelect={onSelectChat}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <AnimatePresence initial={false}>
+              {pinned.length > 0 && (
+                <motion.div
+                  key="pinned-section"
+                  layout={!resizing}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="w-full"
+                >
+                  <ChatSection
+                    label="pinned"
+                    chats={pinned}
+                    activeChatId={activeChatId}
+                    onSelectChat={onSelectChat}
+                    onTogglePin={onTogglePin}
+                    onRenameChat={onRenameChat}
+                    onDeleteChat={onDeleteChat}
+                    animateLayout={!resizing}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <motion.div layout={!resizing} className="w-full">
               <ChatSection
-                label="pinned"
-                chats={pinned}
+                label="chats"
+                chats={recent}
                 activeChatId={activeChatId}
                 onSelectChat={onSelectChat}
                 onTogglePin={onTogglePin}
@@ -480,20 +682,8 @@ export function ChatsSidebar({
                 animateLayout={!resizing}
               />
             </motion.div>
-          )}
-        </AnimatePresence>
-        <motion.div layout={!resizing} className="w-full">
-          <ChatSection
-            label="chats"
-            chats={recent}
-            activeChatId={activeChatId}
-            onSelectChat={onSelectChat}
-            onTogglePin={onTogglePin}
-            onRenameChat={onRenameChat}
-            onDeleteChat={onDeleteChat}
-            animateLayout={!resizing}
-          />
-        </motion.div>
+          </>
+        )}
       </div>
     </aside>
   );
