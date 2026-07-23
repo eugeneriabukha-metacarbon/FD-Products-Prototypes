@@ -39,6 +39,9 @@ export default function App() {
   const [attachments, setAttachments] = React.useState<Attachment[]>([]);
   const [paywallOpen, setPaywallOpen] = React.useState(false);
   const [currentPlan, setCurrentPlan] = React.useState<PlanId>("free");
+  // Cancelled = still on the paid plan until the billing period ends (the
+  // manage view shows the pending-Free card), cleared by picking a plan again.
+  const [planCancelled, setPlanCancelled] = React.useState(false);
   const [view, setView] = React.useState<AppView>("launchpad");
   const replyCounter = React.useRef(0);
   const replyTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -171,7 +174,12 @@ export default function App() {
       <Paywall
         onClose={() => setPaywallOpen(false)}
         currentPlan={currentPlan}
-        onChangePlan={setCurrentPlan}
+        cancelled={planCancelled}
+        onChangePlan={(plan) => {
+          setCurrentPlan(plan);
+          setPlanCancelled(false);
+        }}
+        onCancelPlan={() => setPlanCancelled(true)}
       />
     );
   }

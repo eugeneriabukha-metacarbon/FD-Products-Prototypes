@@ -1,7 +1,6 @@
 import {
   ArrowSquareOutIcon,
   CheckCircleIcon,
-  SparkleIcon,
   XCircleIcon,
 } from "@phosphor-icons/react";
 import { Button } from "@financedistrict/apps-ui/button";
@@ -27,6 +26,12 @@ export interface PlanManagementProps {
   /** Yearly price string like "$10" — drives the mock invoice amounts. */
   priceYearly: string;
   renewsOn: string;
+  /**
+   * Plan cancelled but retained until the period ends — the card flips to the
+   * pending-Free state ("Upgrade plan") and the cancellation section hides
+   * (Figma 574:88597).
+   */
+  cancelled?: boolean;
   /** Open the plan grid to change tiers. */
   onUpgrade: () => void;
   /** Open the cancel-confirmation dialog. */
@@ -41,6 +46,7 @@ export function PlanManagement({
   planName,
   priceYearly,
   renewsOn,
+  cancelled = false,
   onUpgrade,
   onCancel,
 }: PlanManagementProps) {
@@ -53,25 +59,35 @@ export function PlanManagement({
 
   return (
     <div className="mx-auto flex w-full max-w-[600px] flex-col gap-10 px-4 pt-4 pb-16">
-      {/* current plan card */}
+      {/* current plan card — cancelled flips it to the pending-Free state */}
       <div className="bg-card-background border-card-border rounded-md flex items-center justify-between gap-4 border p-6">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <SparkleIcon
-              size={24}
-              weight="fill"
-              className="text-card-foreground"
-              aria-hidden="true"
-            />
-            <span className="display-04 text-card-foreground">{planName}</span>
-          </div>
-          <p className="body-03 text-card-foreground-muted">
-            Auto renews on {renewsOn}.
-          </p>
-        </div>
-        <Button variation="secondary" size="md" onClick={onUpgrade}>
-          Change plan
-        </Button>
+        {cancelled ? (
+          <>
+            <div className="flex flex-col gap-1">
+              <span className="display-04 text-card-foreground">Free</span>
+              <p className="body-03 text-card-foreground-muted">
+                {planName} until {renewsOn}.
+              </p>
+            </div>
+            <Button variation="primary" size="md" onClick={onUpgrade}>
+              Upgrade plan
+            </Button>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-col gap-1">
+              <span className="display-04 text-card-foreground">
+                {planName}
+              </span>
+              <p className="body-03 text-card-foreground-muted">
+                Auto renews on {renewsOn}.
+              </p>
+            </div>
+            <Button variation="secondary" size="md" onClick={onUpgrade}>
+              Change plan
+            </Button>
+          </>
+        )}
       </div>
 
       {/* invoices */}
@@ -138,25 +154,27 @@ export function PlanManagement({
         </div>
       </section>
 
-      {/* cancellation */}
-      <section className="flex items-center justify-between gap-8">
-        <div className="flex flex-col gap-1">
-          <h2 className="display-04 text-primary-foreground">Cancellation</h2>
-          <p className="body-03 text-primary-foreground-muted">
-            You'll keep {planName} until the end of your billing period, then
-            move to Free.
-          </p>
-        </div>
-        <Button
-          variation="destructive"
-          size="sm"
-          onClick={onCancel}
-          wrapperClassName="shrink-0"
-          className="whitespace-nowrap"
-        >
-          Cancel plan
-        </Button>
-      </section>
+      {/* cancellation — gone once the plan is already cancelled */}
+      {!cancelled && (
+        <section className="flex items-center justify-between gap-8">
+          <div className="flex flex-col gap-1">
+            <h2 className="display-04 text-primary-foreground">Cancellation</h2>
+            <p className="body-03 text-primary-foreground-muted">
+              You'll keep {planName} until the end of your billing period, then
+              move to Free.
+            </p>
+          </div>
+          <Button
+            variation="destructive"
+            size="sm"
+            onClick={onCancel}
+            wrapperClassName="shrink-0"
+            className="whitespace-nowrap"
+          >
+            Cancel plan
+          </Button>
+        </section>
+      )}
     </div>
   );
 }

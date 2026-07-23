@@ -74,16 +74,32 @@ const PLANS: Plan[] = [
   },
 ];
 
+/** The hardcoded end of the mock billing period (renewal / retention date). */
+const RENEWS_ON = "Aug 8, 2026";
+
 export interface PaywallProps {
   onClose: () => void;
   /** The plan the user is currently on (owned by App so it persists). */
   currentPlan: PlanId;
-  /** Switch/upgrade/cancel commits the new plan. */
+  /**
+   * The paid plan has been cancelled — features are retained until the period
+   * ends, so the manage layout stays with a pending-Free card (Figma 574:88597).
+   */
+  cancelled?: boolean;
+  /** Switch/upgrade commits the new plan (also clears a cancellation). */
   onChangePlan: (plan: PlanId) => void;
+  /** Cancel keeps the plan until period end instead of dropping to Free. */
+  onCancelPlan: () => void;
 }
 
 /** Plans screen (Figma node 488:227717) — also handles switching & cancelling. */
-export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
+export function Paywall({
+  onClose,
+  currentPlan,
+  cancelled = false,
+  onChangePlan,
+  onCancelPlan,
+}: PaywallProps) {
   const [yearly, setYearly] = React.useState(true);
   const [cancelOpen, setCancelOpen] = React.useState(false);
   // Paid users land on the management view; "Upgrade plan" opens the plan grid.
@@ -111,13 +127,19 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
   const showManage = onPaidPlan && view === "manage";
 
   const handleCancel = () => {
-    onChangePlan("free");
+    // The layout stays on the manage view — only the current-plan card flips
+    // to the pending-Free state (plan features retained until period end).
+    onCancelPlan();
     setCancelOpen(false);
-    showToast("Your plan has been cancelled — you're back on the Free plan.");
+    showToast(
+      `Your plan has been cancelled — you'll keep ${currentPlanName} until ${RENEWS_ON}.`,
+    );
   };
 
   const handleChangePlan = (plan: PlanId) => {
-    const isUpgrade = PLAN_RANK[plan] > PLAN_RANK[currentPlan];
+    // A cancelled plan is pending-Free, so any paid pick reads as an upgrade.
+    const isUpgrade =
+      PLAN_RANK[plan] > (cancelled ? 0 : PLAN_RANK[currentPlan]);
     const name = PLANS.find((p) => p.id === plan)?.name ?? plan;
     onChangePlan(plan);
     // Returning to a paid plan drops back to the management view.
@@ -134,7 +156,7 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
       {/* header */}
       <header className="relative flex w-full shrink-0 items-center justify-between px-4 py-5">
         <div className="flex w-72 items-center gap-4">
-          {onPaidPlan && view === "plans" ? (
+          {onPaidPlan && !cancelled && view === "plans" ? (
             <Button
               variation="ghost"
               size="sm"
@@ -161,9 +183,11 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
         <p className="body-01-medium text-primary-foreground absolute left-1/2 -translate-x-1/2 whitespace-nowrap">
           {showManage
             ? "Manage your plan"
-            : onPaidPlan
-              ? "Change your plan"
-              : "Upgrade your plan"}
+            : cancelled
+              ? "Upgrade plan"
+              : onPaidPlan
+                ? "Change your plan"
+                : "Upgrade your plan"}
         </p>
 
         <div className="flex w-72 items-center justify-end gap-4">
@@ -183,7 +207,8 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
         <PlanManagement
           planName={currentPlanName}
           priceYearly={currentPlanData?.priceYearly ?? "$0"}
-          renewsOn="Aug 8, 2026"
+          renewsOn={RENEWS_ON}
+          cancelled={cancelled}
           onUpgrade={() => setView("plans")}
           onCancel={() => setCancelOpen(true)}
         />
@@ -193,12 +218,12 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
           <section className="flex w-full flex-col items-center gap-6 pt-16 pb-8">
             <div className="flex w-[438px] max-w-full flex-col items-center gap-2 text-center">
               <h1 className="display-03 text-primary-foreground w-full">
-                {onPaidPlan
+                {onPaidPlan && !cancelled
                   ? `You're on the ${currentPlanName} plan`
                   : "Select the plan that works best for you"}
               </h1>
               <p className="body-03 text-primary-foreground-muted w-full">
-                {onPaidPlan
+                {onPaidPlan && !cancelled
                   ? "Change tiers anytime, or cancel to return to the Free plan."
                   : "Unlock unlimited AI conversations, advanced models, and agent automation."}
               </p>
@@ -227,12 +252,14 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
           <section className="flex w-full flex-col items-center pb-16">
             <div className="flex w-[906px] max-w-full items-stretch justify-center gap-4 px-4">
               {/* Free (upgrade) flow shows all three incl. the current Free card;
-              a paid "change plan" flow shows only the plans you can switch TO. */}
-              {(onPaidPlan
+              a paid "change plan" flow shows only the plans you can switch TO.
+              A cancelled plan reads as pending-Free: all three cards, none
+              marked current (the Free card carries the retention note). */}
+              {(onPaidPlan && !cancelled
                 ? PLANS.filter((plan) => plan.id !== currentPlan)
                 : PLANS
               ).map((plan, index) => {
-                const isCurrent = plan.id === currentPlan;
+                const isCurrent = !cancelled && plan.id === currentPlan;
                 const neutral = !plan.brand;
                 return (
                   <motion.div
@@ -322,17 +349,30 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
                           Your current plan
                         </Button>
                       ) : plan.id === "free" ? (
-                        // From a paid plan, moving to Free ends the subscription —
-                        // routed through the same cancel confirmation.
-                        <Button
-                          variation="secondary"
-                          size="md"
-                          wrapperClassName="w-full"
-                          className="w-full"
-                          onClick={() => setCancelOpen(true)}
-                        >
-                          Change to Free
-                        </Button>
+                        cancelled ? (
+                          // Already cancelled — Free is pending, nothing to do.
+                          <Button
+                            variation="primary"
+                            size="md"
+                            disabled
+                            wrapperClassName="w-full"
+                            className="w-full"
+                          >
+                            {`${currentPlanName} until ${RENEWS_ON}, then Free`}
+                          </Button>
+                        ) : (
+                          // From a paid plan, moving to Free ends the subscription —
+                          // routed through the same cancel confirmation.
+                          <Button
+                            variation="secondary"
+                            size="md"
+                            wrapperClassName="w-full"
+                            className="w-full"
+                            onClick={() => setCancelOpen(true)}
+                          >
+                            Change to Free
+                          </Button>
+                        )
                       ) : (
                         <Button
                           variation={plan.brand ? "brand" : "primary"}
@@ -341,7 +381,8 @@ export function Paywall({ onClose, currentPlan, onChangePlan }: PaywallProps) {
                           className="w-full"
                           onClick={() => handleChangePlan(plan.id)}
                         >
-                          {PLAN_RANK[plan.id] > PLAN_RANK[currentPlan]
+                          {PLAN_RANK[plan.id] >
+                          (cancelled ? 0 : PLAN_RANK[currentPlan])
                             ? `Upgrade to ${plan.name}`
                             : `Switch to ${plan.name}`}
                         </Button>
