@@ -7,6 +7,7 @@ import { ProductHeader } from "./ProductHeader";
 import { ActivityList } from "./district-pass/ActivityList";
 import { DangerZone } from "./district-pass/DangerZone";
 import { EmailRow } from "./district-pass/EmailRow";
+import { MemoryTab } from "./district-pass/MemoryTab";
 import { NicknameRow } from "./district-pass/NicknameRow";
 import { PasswordRow } from "./district-pass/PasswordRow";
 import {
@@ -30,9 +31,10 @@ export interface DistrictPassProps {
  * `PassCard` anchors a sidebar layout of sections: Account (Nickname + Email
  * rows that expand in place to edit, plus a Danger zone — irreversible account
  * deletion behind a type-to-confirm Dialog — at the bottom), Activity (the
- * full auth audit log), Security (change password), and Support (Contact
- * support / Help center). All actions are simulated and confirmed with a DS
- * Toast. Sibling of the AI Assistant.
+ * full auth audit log), Memory (ChatGPT-style assistant memories), Security
+ * (change password), and Support (Contact support / Help center). All
+ * actions are simulated and confirmed with a DS Toast. Sibling of the AI
+ * Assistant.
  */
 export function DistrictPass({
   onOpenLaunchpad,
@@ -89,6 +91,11 @@ export function DistrictPass({
     },
     { value: "activity", label: "Activity", content: <ActivityList /> },
     // Devices section hidden for now (DevicesTab is kept on disk).
+    {
+      value: "memory",
+      label: "Memory",
+      content: <MemoryTab onToast={showToast} />,
+    },
     {
       value: "security",
       label: "Security",
