@@ -1,16 +1,14 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Tabs } from "@financedistrict/apps-ui/tabs";
 import { Toast } from "@financedistrict/apps-ui/toast";
 
 import districtPassIconDark from "../assets/app-district-pass-dark.svg";
 import { ProductHeader } from "./ProductHeader";
-import { AccountRows } from "./district-pass/AccountRows";
 import { ActivityList } from "./district-pass/ActivityList";
-import { Configurator } from "./district-pass/Configurator";
 import { DangerZone } from "./district-pass/DangerZone";
-import { DevicesTab } from "./district-pass/DevicesTab";
-import { TwoFactorRow } from "./district-pass/TwoFactorRow";
+import { EmailRow } from "./district-pass/EmailRow";
+import { NicknameRow } from "./district-pass/NicknameRow";
+import { PasswordRow } from "./district-pass/PasswordRow";
 import {
   SidebarLayout,
   type DistrictPassSection,
@@ -28,11 +26,11 @@ export interface DistrictPassProps {
 }
 
 /**
- * District Pass — the FD identity/account product. A hero `PassCard` (identity
- * + verification credential, with an editable display name) anchors three DS
- * `Tabs`: Security (Account details rows that expand in place to edit, plus a
- * Danger zone — irreversible account deletion behind a type-to-confirm Dialog
- * — at the bottom), Activity (the full auth audit log), and Support (Contact
+ * District Pass — the FD identity/account product. A display-only hero
+ * `PassCard` anchors a sidebar layout of sections: Account (Nickname + Email
+ * rows that expand in place to edit, plus a Danger zone — irreversible account
+ * deletion behind a type-to-confirm Dialog — at the bottom), Activity (the
+ * full auth audit log), Security (change password), and Support (Contact
  * support / Help center). All actions are simulated and confirmed with a DS
  * Toast. Sibling of the AI Assistant.
  */
@@ -43,11 +41,10 @@ export function DistrictPass({
 }: DistrictPassProps) {
   const [toast, setToast] = React.useState<string | null>(null);
   const [name, setName] = React.useState("Janno Jaerv");
-  // Stakeholder preview axes, driven by the Configurator toolbar.
-  const [navigation, setNavigation] = React.useState("tabs");
-  // A Security card (Email / Password / 2FA) is mid-edit — locks the delete action.
-  const [accountEditing, setAccountEditing] = React.useState(false);
-  const [twoFactorEditing, setTwoFactorEditing] = React.useState(false);
+  // An Account card (Nickname / Email) is mid-edit — the two rows lock each
+  // other and disable the delete action while either form is open.
+  const [nicknameEditing, setNicknameEditing] = React.useState(false);
+  const [emailEditing, setEmailEditing] = React.useState(false);
   const toastTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(
@@ -63,37 +60,39 @@ export function DistrictPass({
     toastTimer.current = setTimeout(() => setToast(null), 3200);
   };
 
-  // Shared section content — identical across the tabs and sidebar layouts.
   const sections: DistrictPassSection[] = [
-    { value: "activity", label: "Activity", content: <ActivityList /> },
     {
-      value: "devices",
-      label: "Devices",
-      content: <DevicesTab onToast={showToast} />,
-    },
-    {
-      value: "security",
-      label: "Security",
+      value: "account",
+      label: "Account",
       content: (
         <div className="flex flex-col gap-8">
-          <div className="flex flex-col">
-            <AccountRows
+          <div className="divide-card-border flex flex-col divide-y">
+            <NicknameRow
+              name={name}
+              onNameSave={setName}
               onToast={showToast}
-              onEditingChange={setAccountEditing}
-              lockedByOthers={twoFactorEditing}
+              onEditingChange={setNicknameEditing}
+              lockedByOthers={emailEditing}
             />
-            <TwoFactorRow
+            <EmailRow
               onToast={showToast}
-              onEditingChange={setTwoFactorEditing}
-              lockedByOthers={accountEditing}
+              onEditingChange={setEmailEditing}
+              lockedByOthers={nicknameEditing}
             />
           </div>
           <DangerZone
             onDeleted={() => showToast("Your account has been deleted.")}
-            disabled={accountEditing || twoFactorEditing}
+            disabled={nicknameEditing || emailEditing}
           />
         </div>
       ),
+    },
+    { value: "activity", label: "Activity", content: <ActivityList /> },
+    // Devices section hidden for now (DevicesTab is kept on disk).
+    {
+      value: "security",
+      label: "Security",
+      content: <PasswordRow onToast={showToast} />,
     },
     {
       value: "support",
@@ -112,48 +111,16 @@ export function DistrictPass({
         hasPaidPlan={hasPaidPlan}
       />
 
-      <Configurator navigation={navigation} onNavigationChange={setNavigation} />
-
       <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-4 py-16">
         <motion.div
-          className={`flex w-full flex-col gap-8 ${
-            navigation === "sidebar" ? "max-w-[906px]" : "max-w-[480px]"
-          }`}
+          className="flex w-full max-w-[906px] flex-col gap-8"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         >
-          <PassCard
-            name={name}
-            initials="JJ"
-            onNameSave={(next) => {
-              setName(next);
-              showToast("Your name has been updated.");
-            }}
-          />
+          <PassCard name={name} initials="JJ" />
 
-          {navigation === "sidebar" ? (
-            <SidebarLayout sections={sections} />
-          ) : (
-            <Tabs.Root defaultValue="activity" className="gap-6">
-              <Tabs.List
-                aria-label="District Pass sections"
-                className="border-card-border w-full border-b"
-              >
-                {sections.map((section) => (
-                  <Tabs.Trigger key={section.value} value={section.value}>
-                    {section.label}
-                  </Tabs.Trigger>
-                ))}
-              </Tabs.List>
-
-              {sections.map((section) => (
-                <Tabs.Content key={section.value} value={section.value}>
-                  {section.content}
-                </Tabs.Content>
-              ))}
-            </Tabs.Root>
-          )}
+          <SidebarLayout sections={sections} />
         </motion.div>
       </main>
 
