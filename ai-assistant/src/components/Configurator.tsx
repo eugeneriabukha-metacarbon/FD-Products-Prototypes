@@ -84,40 +84,51 @@ export function Configurator({
               </button>
             </div>
 
-            <div className="flex flex-col gap-3 px-3 py-3">
-              {TOGGLES.map((toggle) => (
+            <div className="flex flex-col px-3 py-3">
+              {TOGGLES.map((toggle, index) => (
                 <React.Fragment key={toggle.key}>
-                  <label className="flex cursor-pointer items-center justify-between gap-4">
-                    <span className="body-03 text-card-foreground">
-                      {toggle.label}
-                    </span>
-                    <Switch
-                      checked={config[toggle.key]}
-                      onCheckedChange={(value) => set(toggle.key, value)}
-                      aria-label={toggle.label}
+                  {/* Full-width divider between groups (breaks out of the px-3). */}
+                  {index > 0 && (
+                    <div
+                      aria-hidden="true"
+                      className="border-card-border -mx-3 my-3 border-t"
                     />
-                  </label>
+                  )}
 
-                  {/* Sidebar-colour sub-option, shown only while the toggle is on. */}
-                  {toggle.key === "sidebarBackground" &&
-                    config.sidebarBackground && (
-                      <div className="flex items-center justify-between gap-4 pl-3">
-                        <span className="body-03 text-card-foreground-muted">
-                          Color
-                        </span>
-                        <RightAlignedInlineSelect
-                          options={SIDEBAR_COLOR_OPTIONS}
-                          value={config.sidebarBackgroundColor}
-                          onValueChange={(value) =>
-                            set(
-                              "sidebarBackgroundColor",
-                              value as SidebarBackgroundColor,
-                            )
-                          }
-                          aria-label="Sidebar background color"
-                        />
-                      </div>
-                    )}
+                  {/* One settings group: the toggle + any sub-options. */}
+                  <div className="flex flex-col gap-3">
+                    <label className="flex cursor-pointer items-center justify-between gap-4">
+                      <span className="body-03 text-card-foreground">
+                        {toggle.label}
+                      </span>
+                      <Switch
+                        checked={config[toggle.key]}
+                        onCheckedChange={(value) => set(toggle.key, value)}
+                        aria-label={toggle.label}
+                      />
+                    </label>
+
+                    {/* Sidebar-colour sub-option, shown only while the toggle is on. */}
+                    {toggle.key === "sidebarBackground" &&
+                      config.sidebarBackground && (
+                        <div className="flex items-center justify-between gap-4 pl-3">
+                          <span className="body-03 text-card-foreground-muted">
+                            Color
+                          </span>
+                          <RightAlignedInlineSelect
+                            options={SIDEBAR_COLOR_OPTIONS}
+                            value={config.sidebarBackgroundColor}
+                            onValueChange={(value) =>
+                              set(
+                                "sidebarBackgroundColor",
+                                value as SidebarBackgroundColor,
+                              )
+                            }
+                            aria-label="Sidebar background color"
+                          />
+                        </div>
+                      )}
+                  </div>
                 </React.Fragment>
               ))}
             </div>
