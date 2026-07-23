@@ -14,6 +14,10 @@ export interface ProductHeaderProps {
   onUpgrade: () => void;
   /** Paid users see "View plans" instead of "Upgrade your plan". */
   hasPaidPlan?: boolean;
+  /** Optional action rendered left of a divider + the profile avatar. */
+  rightAction?: React.ReactNode;
+  /** Forwarded to the profile menu: show the plans item there (default true). */
+  showUpgradeInMenu?: boolean;
 }
 
 /**
@@ -27,6 +31,8 @@ export function ProductHeader({
   onOpenLaunchpad,
   onUpgrade,
   hasPaidPlan = false,
+  rightAction,
+  showUpgradeInMenu = true,
 }: ProductHeaderProps) {
   return (
     <header className="z-10 flex w-full shrink-0 items-center justify-between p-4">
@@ -58,7 +64,15 @@ export function ProductHeader({
 
       {/* right-side */}
       <div className="flex w-72 items-center justify-end gap-4">
-        <ProfileMenu onUpgrade={onUpgrade} hasPaidPlan={hasPaidPlan} />
+        {rightAction}
+        {rightAction && (
+          <div className="bg-border h-[9px] w-px" aria-hidden="true" />
+        )}
+        <ProfileMenu
+          onUpgrade={onUpgrade}
+          hasPaidPlan={hasPaidPlan}
+          showUpgradeItem={showUpgradeInMenu}
+        />
       </div>
     </header>
   );

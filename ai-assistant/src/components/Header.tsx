@@ -1,4 +1,5 @@
 import logoUrl from "../assets/ai-assistant-logo.svg";
+import { PlanButton } from "./PlanButton";
 import { ProductHeader } from "./ProductHeader";
 
 export interface HeaderProps {
@@ -23,6 +24,10 @@ export function Header({
       onOpenLaunchpad={onOpenLaunchpad}
       onUpgrade={onUpgrade}
       hasPaidPlan={hasPaidPlan}
+      showUpgradeInMenu={false}
+      rightAction={
+        <PlanButton hasPaidPlan={hasPaidPlan} onClick={onUpgrade} />
+      }
     />
   );
 }

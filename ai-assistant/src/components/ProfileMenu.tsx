@@ -7,6 +7,11 @@ export interface ProfileMenuProps {
   onUpgrade: () => void;
   /** Paid users see "View plans" instead of "Upgrade your plan". */
   hasPaidPlan?: boolean;
+  /**
+   * Show the plans item in the dropdown. Off where the plan action lives as a
+   * header button instead (AI Assistant); on elsewhere (District Pass, Launchpad).
+   */
+  showUpgradeItem?: boolean;
 }
 
 /**
@@ -16,6 +21,7 @@ export interface ProfileMenuProps {
 export function ProfileMenu({
   onUpgrade,
   hasPaidPlan = false,
+  showUpgradeItem = true,
 }: ProfileMenuProps) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const menuRef = React.useRef<HTMLDivElement>(null);
@@ -60,24 +66,26 @@ export function ProfileMenu({
             style={{ transformOrigin: "top right" }}
             className="border-card-border bg-card-background rounded-sm shadow-s absolute top-[calc(100%+8px)] right-0 z-20 w-[220px] border py-2"
           >
-            <button
-              type="button"
-              role="menuitem"
-              className="hover:bg-card-accent flex w-full cursor-pointer items-center gap-1 py-2 pr-12 pl-4 text-left"
-              onClick={() => {
-                setMenuOpen(false);
-                onUpgrade();
-              }}
-            >
-              <RocketLaunchIcon
-                size={16}
-                className="text-card-foreground-muted shrink-0"
-                aria-hidden="true"
-              />
-              <span className="body-03 text-card-foreground whitespace-nowrap">
-                {hasPaidPlan ? "View plans" : "Upgrade your plan"}
-              </span>
-            </button>
+            {showUpgradeItem && (
+              <button
+                type="button"
+                role="menuitem"
+                className="hover:bg-card-accent flex w-full cursor-pointer items-center gap-1 py-2 pr-12 pl-4 text-left"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onUpgrade();
+                }}
+              >
+                <RocketLaunchIcon
+                  size={16}
+                  className="text-card-foreground-muted shrink-0"
+                  aria-hidden="true"
+                />
+                <span className="body-03 text-card-foreground whitespace-nowrap">
+                  {hasPaidPlan ? "View plans" : "Upgrade your plan"}
+                </span>
+              </button>
+            )}
             <button
               type="button"
               role="menuitem"
