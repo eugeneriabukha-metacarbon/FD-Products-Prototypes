@@ -3,10 +3,11 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   CaretUpIcon,
   DotsThreeIcon,
+  NotePencilIcon,
   PencilSimpleIcon,
-  PlusIcon,
   PushPinIcon,
   PushPinSlashIcon,
+  SidebarSimpleIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
 import { Button } from "@financedistrict/apps-ui/button";
@@ -17,6 +18,11 @@ export interface ChatListItem {
   pinned?: boolean;
 }
 
+/** Drag-resize bounds for the bg rail (user requirement: 160–320, default 244). */
+const SIDEBAR_MIN_WIDTH = 160;
+const SIDEBAR_MAX_WIDTH = 320;
+const SIDEBAR_DEFAULT_WIDTH = 244;
+
 export interface ChatsSidebarProps {
   chats: ChatListItem[];
   activeChatId: string | null;
@@ -25,6 +31,15 @@ export interface ChatsSidebarProps {
   onTogglePin: (id: string) => void;
   onRenameChat: (id: string, title: string) => void;
   onDeleteChat: (id: string) => void;
+  /**
+   * Configurator preview axis (Figma 583:128915): render the rail as an
+   * in-flow floating card — surface, border, rounded, inset from the edges —
+   * so the chat content re-centers in the remaining width. Off = the current
+   * transparent full-height overlay (content centered on the page).
+   */
+  showBackground?: boolean;
+  /** Surface used when `showBackground` — beige (gray-50) or white. */
+  backgroundColor?: "beige" | "white";
 }
 
 interface ChatRowProps {
@@ -287,22 +302,139 @@ export function ChatsSidebar({
   onTogglePin,
   onRenameChat,
   onDeleteChat,
+  showBackground = false,
+  backgroundColor = "beige",
 }: ChatsSidebarProps) {
   const pinned = chats.filter((chat) => chat.pinned);
   const recent = chats.filter((chat) => !chat.pinned);
+  const [collapsed, setCollapsed] = React.useState(false);
+  // Drag-resizable width for the bg rail (Figma default 244; clamped 160–320).
+  const [width, setWidth] = React.useState(SIDEBAR_DEFAULT_WIDTH);
+
+  const handleResizeStart = (event: React.PointerEvent<HTMLDivElement>) => {
+    const startX = event.clientX;
+    const startWidth = width;
+    const handle = event.currentTarget;
+    // Route the whole drag to the handle even when the cursor outruns it.
+    // Guarded: capture is unavailable for already-released/synthetic pointers.
+    try {
+      handle.setPointerCapture(event.pointerId);
+    } catch {
+      /* drag still works while the cursor stays over the handle */
+    }
+    const onMove = (e: PointerEvent) => {
+      setWidth(
+        Math.min(
+          SIDEBAR_MAX_WIDTH,
+          Math.max(SIDEBAR_MIN_WIDTH, startWidth + (e.clientX - startX)),
+        ),
+      );
+    };
+    const onUp = () => {
+      handle.removeEventListener("pointermove", onMove);
+      handle.removeEventListener("pointerup", onUp);
+    };
+    handle.addEventListener("pointermove", onMove);
+    handle.addEventListener("pointerup", onUp);
+  };
+
+  // Width by state: the bg rail is drag-resizable (inline style); the
+  // transparent overlay stays 235px; collapsed is a 64px icon rail (w-16 =
+  // 32px button + 16px padding either side). Deliberately NO width transition:
+  // the DS Button's cut-corner hook measures on mount, and a button mounting
+  // while the width is still animating measures a mid-transition size that
+  // never gets corrected here — it then renders clipped to nothing.
+  const widthClass = collapsed ? "w-16" : showBackground ? "" : "w-[235px]";
+  const widthStyle =
+    !collapsed && showBackground ? { width: `${width}px` } : undefined;
+  const surfaceClass = showBackground
+    ? // Floating card rail (Figma 583:129213): surface, border, 6px radius,
+      // inset 8px left/bottom, in normal flow so the chat area re-centers.
+      // Surface is beige (gray-50) or white.
+      `${
+        backgroundColor === "white" ? "bg-card-background" : "bg-background"
+      } border-card-border rounded-md relative z-10 mb-2 ml-2 shrink-0 self-stretch border`
+    : "absolute top-0 left-0 z-10 h-full";
 
   return (
-    <aside className="absolute top-0 left-0 z-10 flex h-full w-[235px] flex-col items-start gap-4 p-4">
-      <Button
-        variation="secondary"
-        size="sm"
-        leftSlot={<PlusIcon aria-hidden="true" />}
-        onClick={onNewChat}
-      >
-        New chat
-      </Button>
+    <aside
+      style={widthStyle}
+      className={`${surfaceClass} ${widthClass} flex flex-col items-start gap-4 p-4`}
+    >
+      {/* Header (Figma 583:129213 expanded / 583:129317 collapsed) — the two
+          states are keyed so the buttons fully remount and their cut-corner
+          clip paths re-measure at the final, settled layout. */}
+      {collapsed ? (
+        // Collapsed rail: expand toggle on top, new-chat icon-button below.
+        <div key="header-collapsed" className="flex flex-col items-start gap-2">
+          <Button
+            variation="ghost"
+            size="sm"
+            iconOnly
+            aria-label="Expand sidebar"
+            aria-expanded={false}
+            onClick={() => setCollapsed(false)}
+          >
+            <SidebarSimpleIcon className="-scale-x-100" aria-hidden="true" />
+          </Button>
+          <Button
+            variation="secondary"
+            size="sm"
+            iconOnly
+            aria-label="New chat"
+            onClick={onNewChat}
+          >
+            <NotePencilIcon aria-hidden="true" />
+          </Button>
+        </div>
+      ) : (
+        // Expanded header: new-chat button + trailing collapse toggle.
+        <div
+          key="header-expanded"
+          className="flex w-full items-center justify-between gap-2"
+        >
+          <Button
+            variation="secondary"
+            size="sm"
+            leftSlot={<NotePencilIcon aria-hidden="true" />}
+            onClick={onNewChat}
+            // Let the button shrink at narrow rail widths (drag-resize min is
+            // 160px) — the label truncates instead of wrapping out of the
+            // fixed-height button.
+            wrapperClassName="min-w-0"
+            className="min-w-0 max-w-full"
+          >
+            <span className="truncate">New chat</span>
+          </Button>
+          <Button
+            variation="ghost"
+            size="sm"
+            iconOnly
+            aria-label="Collapse sidebar"
+            aria-expanded
+            onClick={() => setCollapsed(true)}
+            className="shrink-0"
+          >
+            <SidebarSimpleIcon className="-scale-x-100" aria-hidden="true" />
+          </Button>
+        </div>
+      )}
 
-      <div className="flex min-h-0 w-full flex-col gap-4 overflow-y-auto">
+      {/* Drag handle — resize the bg rail from its right edge (160–320px). */}
+      {showBackground && !collapsed && (
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize sidebar"
+          onPointerDown={handleResizeStart}
+          className="hover:bg-brand-primary-background absolute inset-y-0 -right-1 w-2 cursor-col-resize rounded-full transition-colors"
+        />
+      )}
+
+      {/* Chat list — hidden while collapsed (`hidden` beats an absent `flex`). */}
+      <div
+        className={`${collapsed ? "hidden" : "flex"} min-h-0 w-full flex-col gap-4 overflow-y-auto`}
+      >
         <AnimatePresence initial={false}>
           {pinned.length > 0 && (
             <motion.div

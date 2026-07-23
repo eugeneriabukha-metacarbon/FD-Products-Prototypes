@@ -17,6 +17,16 @@ import { Header } from "./components/Header";
 import { ChatsSidebar } from "./components/ChatsSidebar";
 import { ChatView } from "./components/ChatView";
 import { Composer } from "./components/Composer";
+import {
+  Configurator,
+  DEFAULT_ASSISTANT_CONFIG,
+  type AssistantConfig,
+} from "./components/Configurator";
+
+// three + postprocessing are heavy — load the pattern only when toggled on.
+const PixelBlast = React.lazy(
+  () => import("./components/pixel-blast/PixelBlast"),
+);
 import { Paywall, type PlanId } from "./components/Paywall";
 import { QuickActions } from "./components/QuickActions";
 import { Launchpad } from "./components/Launchpad";
@@ -42,6 +52,25 @@ export default function App() {
   // Cancelled = still on the paid plan until the billing period ends (the
   // manage view shows the pending-Free card), cleared by picking a plan again.
   const [planCancelled, setPlanCancelled] = React.useState(false);
+  // Stakeholder preview axes, driven by the floating Configurator.
+  const [assistantConfig, setAssistantConfig] = React.useState<AssistantConfig>(
+    DEFAULT_ASSISTANT_CONFIG,
+  );
+  const patternLayerRef = React.useRef<HTMLDivElement>(null);
+
+  // The PixelBlast canvas sits behind the UI (-z-10), so pointer events never
+  // reach it naturally — mirror them onto the canvas so its click ripples and
+  // liquid distortion still react through the chat surface.
+  const forwardToPattern = (event: React.PointerEvent) => {
+    const canvas = patternLayerRef.current?.querySelector("canvas");
+    if (!canvas || event.target === canvas) return;
+    canvas.dispatchEvent(
+      new PointerEvent(event.type, {
+        clientX: event.clientX,
+        clientY: event.clientY,
+      }),
+    );
+  };
   const [view, setView] = React.useState<AppView>("launchpad");
   const replyCounter = React.useRef(0);
   const replyTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -213,7 +242,44 @@ export default function App() {
         onOpenLaunchpad={() => setView("launchpad")}
       />
 
-      <div className="isolate relative flex min-h-0 w-full flex-1 items-start">
+      <div
+        className="isolate relative flex min-h-0 w-full flex-1 items-start"
+        onPointerDownCapture={forwardToPattern}
+        onPointerMoveCapture={forwardToPattern}
+      >
+        {/* Background pattern (configurator axis) — behind the sidebar + chat. */}
+        {assistantConfig.backgroundPattern && (
+          <div
+            ref={patternLayerRef}
+            aria-hidden="true"
+            className="absolute inset-0 -z-10"
+          >
+            <React.Suspense fallback={null}>
+              {/* Tuned from the React Bits example (2px #e0e0e0, density .5 —
+                  calibrated for dark sites, invisible on our white surface):
+                  bigger/darker/denser so the dither reads on white. `liquid`
+                  is OFF deliberately — its postprocessing EffectComposer path
+                  renders nothing on WebKit/Safari (silently), while the click
+                  ripples live in the base shader and work everywhere. */}
+              <PixelBlast
+                variant="circle"
+                pixelSize={2}
+                color="#c9c9c9"
+                patternScale={4}
+                patternDensity={1.2}
+                pixelSizeJitter={0.5}
+                enableRipples
+                rippleSpeed={0.4}
+                rippleThickness={0.12}
+                rippleIntensityScale={1.5}
+                speed={0.25}
+                edgeFade={0.1}
+                transparent
+              />
+            </React.Suspense>
+          </div>
+        )}
+
         <ChatsSidebar
           chats={chats}
           activeChatId={activeChatId}
@@ -222,6 +288,8 @@ export default function App() {
           onTogglePin={handleTogglePin}
           onRenameChat={handleRenameChat}
           onDeleteChat={handleDeleteChat}
+          showBackground={assistantConfig.sidebarBackground}
+          backgroundColor={assistantConfig.sidebarBackgroundColor}
         />
 
         {activeChat ? (
@@ -238,7 +306,7 @@ export default function App() {
           />
         ) : (
           /* Empty state — greeting, composer, quick actions (Figma 484:217191). */
-          <main className="bg-surface flex h-full min-w-px flex-1 flex-col items-center overflow-y-auto pt-16 pb-4">
+          <main className="flex h-full min-w-px flex-1 flex-col items-center overflow-y-auto pt-16 pb-4">
             <div className="flex w-[906px] max-w-full flex-1 items-start justify-center gap-8">
               <div className="flex h-full min-w-px flex-1 flex-col items-center gap-8 py-32">
                 <motion.div
@@ -292,6 +360,9 @@ export default function App() {
           </main>
         )}
       </div>
+
+      {/* Stakeholder-only preview panel (bottom-right, collapsible). */}
+      <Configurator config={assistantConfig} onChange={setAssistantConfig} />
     </div>
   );
 }

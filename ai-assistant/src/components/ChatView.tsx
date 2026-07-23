@@ -16,6 +16,8 @@ export interface ChatViewProps {
   onDraftChange: (value: string) => void;
   onSend: () => void;
   onAttach: () => void;
+  /** Extra classes on the root `<main>` (e.g. the configurator's canvas pattern). */
+  className?: string;
 }
 
 /** Active conversation: scrollable transcript + docked composer. */
@@ -29,6 +31,7 @@ export function ChatView({
   onDraftChange,
   onSend,
   onAttach,
+  className = "",
 }: ChatViewProps) {
   const scrollerRef = React.useRef<HTMLDivElement>(null);
 
@@ -42,7 +45,11 @@ export function ChatView({
   }, [messages.length, typing]);
 
   return (
-    <main className="bg-surface flex h-full min-w-px flex-1 flex-col items-center overflow-hidden py-4">
+    // No own background — the app root paints the surface, and the
+    // configurator's pattern canvas (behind at -z-10) must show through.
+    <main
+      className={`flex h-full min-w-px flex-1 flex-col items-center overflow-hidden py-4 ${className}`}
+    >
       <div className="flex min-h-0 w-[906px] max-w-full flex-1 flex-col items-center">
         {/* transcript */}
         <div
