@@ -32,6 +32,8 @@ import { QuickActions } from "./components/QuickActions";
 import { Launchpad } from "./components/Launchpad";
 import { DistrictPass } from "./components/DistrictPass";
 import { MemoryDialog } from "./components/MemoryDialog";
+import { PreferencesDialog } from "./components/PreferencesDialog";
+import type { RiskProfile } from "./components/RiskSlider";
 
 /** Top-level screen. The assistant is the default; the Launchpad is the app
  *  switcher reached from the header, and District Pass is a coming-soon stub. */
@@ -53,6 +55,9 @@ export default function App() {
   // `memoryEnabled` is lifted here so the sidebar item can label its state.
   const [memoryDialogOpen, setMemoryDialogOpen] = React.useState(false);
   const [memoryEnabled, setMemoryEnabled] = React.useState(true);
+  // Risk appetite (Preferences → Risk profile) — the assistant would tune
+  // strategy suggestions to it.
+  const [riskProfile, setRiskProfile] = React.useState<RiskProfile>("balanced");
   const [currentPlan, setCurrentPlan] = React.useState<PlanId>("free");
   // Cancelled = still on the paid plan until the billing period ends (the
   // manage view shows the pending-Free card), cleared by picking a plan again.
@@ -300,6 +305,7 @@ export default function App() {
           backgroundColor={assistantConfig.sidebarBackgroundColor}
           onOpenMemory={() => setMemoryDialogOpen(true)}
           memoryEnabled={memoryEnabled}
+          extendedPreferences={assistantConfig.extendedPreferences}
         />
 
         {activeChat ? (
@@ -374,13 +380,25 @@ export default function App() {
       {/* Stakeholder-only preview panel (bottom-right, collapsible). */}
       <Configurator config={assistantConfig} onChange={setAssistantConfig} />
 
-      {/* Memory settings as a modal — the sidebar-footer entry point. */}
-      <MemoryDialog
-        open={memoryDialogOpen}
-        onOpenChange={setMemoryDialogOpen}
-        enabled={memoryEnabled}
-        onEnabledChange={setMemoryEnabled}
-      />
+      {/* Sidebar-footer settings dialog — the extended-preferences axis swaps
+          the Memory-only modal for the multi-section Preferences dialog. */}
+      {assistantConfig.extendedPreferences ? (
+        <PreferencesDialog
+          open={memoryDialogOpen}
+          onOpenChange={setMemoryDialogOpen}
+          memoryEnabled={memoryEnabled}
+          onMemoryEnabledChange={setMemoryEnabled}
+          riskProfile={riskProfile}
+          onRiskProfileChange={setRiskProfile}
+        />
+      ) : (
+        <MemoryDialog
+          open={memoryDialogOpen}
+          onOpenChange={setMemoryDialogOpen}
+          enabled={memoryEnabled}
+          onEnabledChange={setMemoryEnabled}
+        />
+      )}
     </div>
   );
 }

@@ -20,6 +20,8 @@ export interface AssistantConfig {
   backgroundPattern: boolean;
   /** Where the pattern shows (only when `backgroundPattern`). */
   backgroundPatternPlacement: BackgroundPatternPlacement;
+  /** Swap the sidebar Memory item for the multi-section Preferences dialog. */
+  extendedPreferences: boolean;
 }
 
 export const DEFAULT_ASSISTANT_CONFIG: AssistantConfig = {
@@ -27,14 +29,18 @@ export const DEFAULT_ASSISTANT_CONFIG: AssistantConfig = {
   sidebarBackgroundColor: "beige",
   backgroundPattern: false,
   backgroundPatternPlacement: "all",
+  extendedPreferences: false,
 };
 
 /** Boolean toggle axes, in display order. */
-const TOGGLES: { key: "sidebarBackground" | "backgroundPattern"; label: string }[] =
-  [
-    { key: "sidebarBackground", label: "Sidebar background" },
-    { key: "backgroundPattern", label: "Background pattern" },
-  ];
+const TOGGLES: {
+  key: "sidebarBackground" | "backgroundPattern" | "extendedPreferences";
+  label: string;
+}[] = [
+  { key: "sidebarBackground", label: "Sidebar background" },
+  { key: "backgroundPattern", label: "Background pattern" },
+  { key: "extendedPreferences", label: "Extended preferences" },
+];
 
 const SIDEBAR_COLOR_OPTIONS: SelectOption[] = [
   { value: "beige", label: "Beige" },
@@ -137,6 +143,14 @@ export function Configurator({
                             aria-label="Sidebar background color"
                           />
                         </div>
+                      )}
+
+                    {/* What the axis did — shown only while the toggle is on. */}
+                    {toggle.key === "extendedPreferences" &&
+                      config.extendedPreferences && (
+                        <p className="body-04 text-card-foreground-muted">
+                          Memory in the sidebar is replaced by Preferences.
+                        </p>
                       )}
 
                     {/* Pattern-placement sub-option, shown only while the toggle is on. */}

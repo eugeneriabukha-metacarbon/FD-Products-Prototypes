@@ -4,6 +4,7 @@ import {
   BrainIcon,
   CaretDownIcon,
   DotsThreeIcon,
+  FadersIcon,
   MagnifyingGlassIcon,
   NotePencilIcon,
   PencilSimpleIcon,
@@ -132,6 +133,12 @@ export interface ChatsSidebarProps {
   onOpenMemory?: () => void;
   /** Memory on/off — reflected in the footer item label ("Memory (on/off)"). */
   memoryEnabled?: boolean;
+  /**
+   * Configurator axis: render the footer item as "Preferences" (Faders icon,
+   * no on/off suffix — it opens the multi-section Preferences dialog) instead
+   * of the Memory item. `onOpenMemory` stays the click handler either way.
+   */
+  extendedPreferences?: boolean;
 }
 
 interface ChatRowProps {
@@ -414,8 +421,12 @@ export function ChatsSidebar({
   backgroundColor = "beige",
   onOpenMemory,
   memoryEnabled = true,
+  extendedPreferences = false,
 }: ChatsSidebarProps) {
-  const memoryStateLabel = `Memory (${memoryEnabled ? "on" : "off"})`;
+  const memoryStateLabel = extendedPreferences
+    ? "Preferences"
+    : `Memory (${memoryEnabled ? "on" : "off"})`;
+  const SettingsIcon = extendedPreferences ? FadersIcon : BrainIcon;
   const pinned = chats.filter((chat) => chat.pinned);
   const recent = chats.filter((chat) => !chat.pinned);
   const [collapsed, setCollapsed] = React.useState(false);
@@ -707,7 +718,7 @@ export function ChatsSidebar({
             onClick={onOpenMemory}
             className="mt-auto"
           >
-            <BrainIcon aria-hidden="true" />
+            <SettingsIcon aria-hidden="true" />
           </Button>
         ) : (
           <button
@@ -718,7 +729,7 @@ export function ChatsSidebar({
               showBackground ? "border-card-border border-t" : ""
             }`}
           >
-            <BrainIcon size={16} aria-hidden="true" className="shrink-0" />
+            <SettingsIcon size={16} aria-hidden="true" className="shrink-0" />
             <span className="body-03">{memoryStateLabel}</span>
           </button>
         ))}
