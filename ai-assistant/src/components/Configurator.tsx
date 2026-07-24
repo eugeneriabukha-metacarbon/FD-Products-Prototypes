@@ -8,6 +8,8 @@ import { RightAlignedInlineSelect } from "./RightAlignedInlineSelect";
 
 export type SidebarBackgroundColor = "beige" | "white";
 
+export type BackgroundPatternPlacement = "all" | "new-chat";
+
 /** Preview axes for the AI Assistant, driven by the floating configurator. */
 export interface AssistantConfig {
   /** Give the chats sidebar its own background surface (off = current view). */
@@ -16,12 +18,15 @@ export interface AssistantConfig {
   sidebarBackgroundColor: SidebarBackgroundColor;
   /** Show a decorative pattern on the chat canvas. */
   backgroundPattern: boolean;
+  /** Where the pattern shows (only when `backgroundPattern`). */
+  backgroundPatternPlacement: BackgroundPatternPlacement;
 }
 
 export const DEFAULT_ASSISTANT_CONFIG: AssistantConfig = {
   sidebarBackground: false,
   sidebarBackgroundColor: "beige",
   backgroundPattern: false,
+  backgroundPatternPlacement: "all",
 };
 
 /** Boolean toggle axes, in display order. */
@@ -34,6 +39,11 @@ const TOGGLES: { key: "sidebarBackground" | "backgroundPattern"; label: string }
 const SIDEBAR_COLOR_OPTIONS: SelectOption[] = [
   { value: "beige", label: "Beige" },
   { value: "white", label: "White" },
+];
+
+const PATTERN_PLACEMENT_OPTIONS: SelectOption[] = [
+  { value: "all", label: "All screens" },
+  { value: "new-chat", label: "New chat only" },
 ];
 
 /**
@@ -125,6 +135,27 @@ export function Configurator({
                               )
                             }
                             aria-label="Sidebar background color"
+                          />
+                        </div>
+                      )}
+
+                    {/* Pattern-placement sub-option, shown only while the toggle is on. */}
+                    {toggle.key === "backgroundPattern" &&
+                      config.backgroundPattern && (
+                        <div className="flex items-center justify-between gap-4 pl-3">
+                          <span className="body-03 text-card-foreground-muted">
+                            Placement
+                          </span>
+                          <RightAlignedInlineSelect
+                            options={PATTERN_PLACEMENT_OPTIONS}
+                            value={config.backgroundPatternPlacement}
+                            onValueChange={(value) =>
+                              set(
+                                "backgroundPatternPlacement",
+                                value as BackgroundPatternPlacement,
+                              )
+                            }
+                            aria-label="Background pattern placement"
                           />
                         </div>
                       )}

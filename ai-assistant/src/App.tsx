@@ -252,8 +252,11 @@ export default function App() {
         onPointerDownCapture={forwardToPattern}
         onPointerMoveCapture={forwardToPattern}
       >
-        {/* Background pattern (configurator axis) — behind the sidebar + chat. */}
-        {assistantConfig.backgroundPattern && (
+        {/* Background pattern (configurator axis) — behind the sidebar + chat.
+            Placement "new-chat" limits it to the empty state (no open chat). */}
+        {assistantConfig.backgroundPattern &&
+          (assistantConfig.backgroundPatternPlacement === "all" ||
+            !activeChat) && (
           <div
             ref={patternLayerRef}
             aria-hidden="true"
