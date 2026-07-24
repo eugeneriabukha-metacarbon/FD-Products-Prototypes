@@ -13,7 +13,9 @@ import {
   createDemoAttachments,
   type Attachment,
 } from "./components/Attachments";
+import logoUrl from "./assets/ai-assistant-logo.svg";
 import { Header } from "./components/Header";
+import { LaunchpadButton, ProductBrand } from "./components/ProductHeader";
 import { ChatsSidebar } from "./components/ChatsSidebar";
 import { ChatView } from "./components/ChatView";
 import { Composer } from "./components/Composer";
@@ -244,16 +246,34 @@ export default function App() {
     );
   }
 
+  // Sidebar-background "sidebar" type: the rail runs full height, hosts the
+  // launchpad button + lockup, and the glass header spans only the chat column.
+  const appSidebar =
+    assistantConfig.sidebarBackground &&
+    assistantConfig.sidebarBackgroundType === "sidebar";
+
+  const header = (
+    <Header
+      onUpgrade={() => setPaywallOpen(true)}
+      hasPaidPlan={currentPlan !== "free"}
+      onOpenLaunchpad={() => setView("launchpad")}
+      showBrand={!appSidebar}
+    />
+  );
+
   return (
-    <div className="bg-surface isolate flex h-screen flex-col">
-      <Header
-        onUpgrade={() => setPaywallOpen(true)}
-        hasPaidPlan={currentPlan !== "free"}
-        onOpenLaunchpad={() => setView("launchpad")}
-      />
+    <div className="bg-surface isolate relative flex h-screen flex-col">
+      {/* Glass header overlays the content row (out of flow) — the row pads
+          itself down by the 64px header height, while its absolute pattern
+          layer still extends up behind the translucent blur. In the
+          app-sidebar layout the header instead lives inside the chat column,
+          to the right of the full-height rail. */}
+      {!appSidebar && header}
 
       <div
-        className="isolate relative flex min-h-0 w-full flex-1 items-start"
+        className={`isolate relative flex min-h-0 w-full flex-1 items-start ${
+          appSidebar ? "" : "pt-16"
+        }`}
         onPointerDownCapture={forwardToPattern}
         onPointerMoveCapture={forwardToPattern}
       >
@@ -262,36 +282,36 @@ export default function App() {
         {assistantConfig.backgroundPattern &&
           (assistantConfig.backgroundPatternPlacement === "all" ||
             !activeChat) && (
-          <div
-            ref={patternLayerRef}
-            aria-hidden="true"
-            className="absolute inset-0 -z-10"
-          >
-            <React.Suspense fallback={null}>
-              {/* Tuned from the React Bits example (2px #e0e0e0, density .5 —
+            <div
+              ref={patternLayerRef}
+              aria-hidden="true"
+              className="absolute inset-0 -z-10"
+            >
+              <React.Suspense fallback={null}>
+                {/* Tuned from the React Bits example (2px #e0e0e0, density .5 —
                   calibrated for dark sites, invisible on our white surface):
                   bigger/darker/denser so the dither reads on white. `liquid`
                   is OFF deliberately — its postprocessing EffectComposer path
                   renders nothing on WebKit/Safari (silently), while the click
                   ripples live in the base shader and work everywhere. */}
-              <PixelBlast
-                variant="circle"
-                pixelSize={2}
-                color="#c9c9c9"
-                patternScale={4}
-                patternDensity={1.2}
-                pixelSizeJitter={0.5}
-                enableRipples
-                rippleSpeed={0.4}
-                rippleThickness={0.12}
-                rippleIntensityScale={1.5}
-                speed={0.25}
-                edgeFade={0.1}
-                transparent
-              />
-            </React.Suspense>
-          </div>
-        )}
+                <PixelBlast
+                  variant="circle"
+                  pixelSize={2}
+                  color="#c9c9c9"
+                  patternScale={4}
+                  patternDensity={1.2}
+                  pixelSizeJitter={0.5}
+                  enableRipples
+                  rippleSpeed={0.4}
+                  rippleThickness={0.12}
+                  rippleIntensityScale={1.5}
+                  speed={0.25}
+                  edgeFade={0.1}
+                  transparent
+                />
+              </React.Suspense>
+            </div>
+          )}
 
         <ChatsSidebar
           chats={chats}
@@ -306,75 +326,108 @@ export default function App() {
           onOpenMemory={() => setMemoryDialogOpen(true)}
           memoryEnabled={memoryEnabled}
           extendedPreferences={assistantConfig.extendedPreferences}
+          appSidebar={appSidebar}
+          brandSlot={
+            <div className="flex w-full items-center gap-4">
+              <LaunchpadButton onClick={() => setView("launchpad")} />
+              <div className="bg-border h-[9px] w-px" aria-hidden="true" />
+              <ProductBrand
+                name="AI Assistant"
+                icon={
+                  <img src={logoUrl} alt="" className="h-[17px] w-[17.75px]" />
+                }
+                // Mark-only when the rail's CONTENT box (outer width minus
+                // p-4 + border) drops under the ~191px the full brand row
+                // needs — container queries measure the content box.
+                nameClassName="@max-[193px]/sidebar:hidden"
+              />
+            </div>
+          }
+          brandSlotCollapsed={
+            <LaunchpadButton onClick={() => setView("launchpad")} />
+          }
         />
 
-        {activeChat ? (
-          <ChatView
-            title={activeChat.title}
-            messages={activeChat.messages}
-            typing={typing}
-            attachments={attachments}
-            onRemoveAttachment={handleRemoveAttachment}
-            draft={draft}
-            onDraftChange={setDraft}
-            onSend={handleSend}
-            onAttach={handleAttach}
-          />
-        ) : (
-          /* Empty state — greeting, composer, quick actions (Figma 484:217191). */
-          <main className="flex h-full min-w-px flex-1 flex-col items-center overflow-y-auto pt-16 pb-4">
-            <div className="flex w-[906px] max-w-full flex-1 items-start justify-center gap-8">
-              <div className="flex h-full min-w-px flex-1 flex-col items-center gap-8 py-32">
-                <motion.div
-                  className="flex w-full max-w-[600px] flex-col gap-2"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                >
-                  <h1
-                    className="display-02 text-primary-foreground w-full text-center"
-                    style={{ fontVariationSettings: '"wdth" 110' }}
+        {/* App-sidebar layout: the chat column is its own positioning context
+            so the glass header spans exactly the area right of the rail (at
+            any drag width). `contents` keeps the classic layout untouched. */}
+        <div
+          className={
+            appSidebar
+              ? "relative flex h-full min-w-0 flex-1 flex-col pt-16"
+              : "contents"
+          }
+        >
+          {appSidebar && header}
+
+          {activeChat ? (
+            <ChatView
+              title={activeChat.title}
+              messages={activeChat.messages}
+              typing={typing}
+              attachments={attachments}
+              onRemoveAttachment={handleRemoveAttachment}
+              draft={draft}
+              onDraftChange={setDraft}
+              onSend={handleSend}
+              onAttach={handleAttach}
+            />
+          ) : (
+            /* Empty state — greeting, composer, quick actions (Figma 484:217191). */
+            <main className="flex h-full min-w-px flex-1 flex-col items-center overflow-y-auto pt-16 pb-4">
+              <div className="flex w-[906px] max-w-full flex-1 items-start justify-center gap-8">
+                <div className="flex h-full min-w-px flex-1 flex-col items-center gap-8 py-32">
+                  <motion.div
+                    className="flex w-full max-w-[600px] flex-col gap-2"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
                   >
-                    Hi, Janno! What can I do for you?
-                  </h1>
-                </motion.div>
-
-                <AnimatePresence>
-                  {attachments.length > 0 && (
-                    <motion.div
-                      key="attachments"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.25, ease: "easeOut" }}
-                      className="flex w-full justify-center overflow-hidden"
+                    <h1
+                      className="display-02 text-primary-foreground w-full text-center"
+                      style={{ fontVariationSettings: '"wdth" 110' }}
                     >
-                      <AttachmentsRow
-                        attachments={attachments}
-                        onRemove={handleRemoveAttachment}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                <motion.div
-                  className="flex w-full justify-center"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease: "easeOut", delay: 0.08 }}
-                >
-                  <Composer
-                    value={draft}
-                    onChange={setDraft}
-                    onSend={handleSend}
-                    onAttach={handleAttach}
-                  />
-                </motion.div>
+                      Hi, Janno! What can I do for you?
+                    </h1>
+                  </motion.div>
 
-                <QuickActions onPick={setDraft} />
+                  <AnimatePresence>
+                    {attachments.length > 0 && (
+                      <motion.div
+                        key="attachments"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                        className="flex w-full justify-center overflow-hidden"
+                      >
+                        <AttachmentsRow
+                          attachments={attachments}
+                          onRemove={handleRemoveAttachment}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <motion.div
+                    className="flex w-full justify-center"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut", delay: 0.08 }}
+                  >
+                    <Composer
+                      value={draft}
+                      onChange={setDraft}
+                      onSend={handleSend}
+                      onAttach={handleAttach}
+                    />
+                  </motion.div>
+
+                  <QuickActions onPick={setDraft} />
+                </div>
               </div>
-            </div>
-          </main>
-        )}
+            </main>
+          )}
+        </div>
       </div>
 
       {/* Stakeholder-only preview panel (bottom-right, collapsible). */}

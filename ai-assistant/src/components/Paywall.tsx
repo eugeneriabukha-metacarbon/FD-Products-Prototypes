@@ -153,8 +153,9 @@ export function Paywall({
 
   return (
     <div className="bg-surface flex h-screen flex-col overflow-y-auto">
-      {/* header */}
-      <header className="relative flex w-full shrink-0 items-center justify-between px-4 py-5">
+      {/* header — glass (Figma 474:143342): sticky in the page scroller, the
+          plan grid frosts through the translucent blur when scrolled. */}
+      <header className="bg-surface/[80%] sticky top-0 z-30 flex w-full shrink-0 items-center justify-between px-4 py-5 backdrop-blur-md">
         <div className="flex w-72 items-center gap-4">
           {onPaidPlan && !cancelled && view === "plans" ? (
             <Button

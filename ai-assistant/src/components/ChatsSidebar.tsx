@@ -139,6 +139,17 @@ export interface ChatsSidebarProps {
    * of the Memory item. `onOpenMemory` stays the click handler either way.
    */
   extendedPreferences?: boolean;
+  /**
+   * Configurator axis (with `showBackground`): full-height app-sidebar chrome
+   * — flush to the screen edges (no inset, no rounding, right border only)
+   * and hosting the brand slots on top. Width drag-resize works as on the
+   * floating panel.
+   */
+  appSidebar?: boolean;
+  /** Brand row rendered at the top while expanded (launchpad + lockup). */
+  brandSlot?: React.ReactNode;
+  /** Brand rendered at the top of the collapsed rail (launchpad button). */
+  brandSlotCollapsed?: React.ReactNode;
 }
 
 interface ChatRowProps {
@@ -422,6 +433,9 @@ export function ChatsSidebar({
   onOpenMemory,
   memoryEnabled = true,
   extendedPreferences = false,
+  appSidebar = false,
+  brandSlot,
+  brandSlotCollapsed,
 }: ChatsSidebarProps) {
   const memoryStateLabel = extendedPreferences
     ? "Preferences"
@@ -507,14 +521,23 @@ export function ChatsSidebar({
   const widthClass = collapsed ? "w-16" : showBackground ? "" : "w-[235px]";
   const widthStyle =
     !collapsed && showBackground ? { width: `${width}px` } : undefined;
+  const surface =
+    backgroundColor === "white" ? "bg-card-background" : "bg-background";
   const surfaceClass = showBackground
-    ? // Floating card rail (Figma 583:129213): surface, border, 6px radius,
-      // inset 8px left/bottom, in normal flow so the chat area re-centers.
-      // Surface is beige (gray-50) or white.
-      `${
-        backgroundColor === "white" ? "bg-card-background" : "bg-background"
-      } border-card-border rounded-md relative z-10 mb-2 ml-2 shrink-0 self-stretch border`
-    : "absolute top-0 left-0 z-10 h-full";
+    ? appSidebar
+      ? // Full-height app sidebar (configurator type "sidebar"): flush to the
+        // screen edges — no inset, no rounding, just a right hairline. The
+        // row drops its header padding for this variant, so self-stretch
+        // spans the full viewport height. `@container/sidebar` lets the brand
+        // slot swap to mark-only at narrow drag widths.
+        `${surface} border-card-border @container/sidebar relative z-10 shrink-0 self-stretch border-r`
+      : // Floating card rail (Figma 583:129213): surface, border, 6px radius,
+        // inset 8px left/bottom, in normal flow so the chat area re-centers.
+        // Surface is beige (gray-50) or white.
+        `${surface} border-card-border rounded-md relative z-10 mb-2 ml-2 shrink-0 self-stretch border`
+    : // top-16 clears the glass-header overlay (absolute children ignore the
+      // content row's padding, so the offset must be repeated here).
+      "absolute top-16 bottom-0 left-0 z-10";
 
   return (
     <aside
@@ -522,6 +545,10 @@ export function ChatsSidebar({
       style={widthStyle}
       className={`${surfaceClass} ${widthClass} flex flex-col items-start gap-4 p-4`}
     >
+      {/* App-sidebar brand row — the launchpad button + product lockup move
+          from the header into the rail for the "sidebar" type. */}
+      {appSidebar && (collapsed ? brandSlotCollapsed : brandSlot)}
+
       {/* Header (Figma 583:129213 expanded / 583:129317 collapsed) — the two
           states are keyed so the buttons fully remount and their cut-corner
           clip paths re-measure at the final, settled layout. */}

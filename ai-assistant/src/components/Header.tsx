@@ -9,6 +9,8 @@ export interface HeaderProps {
   hasPaidPlan?: boolean;
   /** Open the Launchpad (the app-switcher button). */
   onOpenLaunchpad: () => void;
+  /** Hide the launchpad button + lockup (they live in the app sidebar). */
+  showBrand?: boolean;
 }
 
 /** AI Assistant header — the product lockup over the shared `ProductHeader`. */
@@ -16,6 +18,7 @@ export function Header({
   onUpgrade,
   hasPaidPlan = false,
   onOpenLaunchpad,
+  showBrand = true,
 }: HeaderProps) {
   return (
     <ProductHeader
@@ -25,6 +28,7 @@ export function Header({
       onUpgrade={onUpgrade}
       hasPaidPlan={hasPaidPlan}
       showUpgradeInMenu={false}
+      showBrand={showBrand}
       rightAction={
         <PlanButton hasPaidPlan={hasPaidPlan} onClick={onUpgrade} />
       }

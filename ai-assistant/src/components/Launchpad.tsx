@@ -78,10 +78,11 @@ export function Launchpad({
   ];
 
   return (
-    <div className="bg-surface isolate flex h-screen flex-col">
+    <div className="bg-surface isolate relative flex h-screen flex-col">
       <LaunchpadHeader onUpgrade={onUpgrade} hasPaidPlan={hasPaidPlan} />
 
-      <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto py-16">
+      {/* pt-32 = the 64px glass-header overlay + the original 64px gap. */}
+      <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto pt-32 pb-16">
         <div className="flex w-[906px] max-w-full items-start gap-12 px-4">
           {/* left column — hero + doc chips */}
           <motion.div

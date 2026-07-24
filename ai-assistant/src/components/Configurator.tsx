@@ -8,6 +8,8 @@ import { RightAlignedInlineSelect } from "./RightAlignedInlineSelect";
 
 export type SidebarBackgroundColor = "beige" | "white";
 
+export type SidebarBackgroundType = "panel" | "sidebar";
+
 export type BackgroundPatternPlacement = "all" | "new-chat";
 
 /** Preview axes for the AI Assistant, driven by the floating configurator. */
@@ -16,6 +18,11 @@ export interface AssistantConfig {
   sidebarBackground: boolean;
   /** Which surface the sidebar background uses (only when `sidebarBackground`). */
   sidebarBackgroundColor: SidebarBackgroundColor;
+  /**
+   * Rail chrome (only when `sidebarBackground`): the inset floating panel, or
+   * a full-height app sidebar hosting the launchpad button + product lockup.
+   */
+  sidebarBackgroundType: SidebarBackgroundType;
   /** Show a decorative pattern on the chat canvas. */
   backgroundPattern: boolean;
   /** Where the pattern shows (only when `backgroundPattern`). */
@@ -27,6 +34,7 @@ export interface AssistantConfig {
 export const DEFAULT_ASSISTANT_CONFIG: AssistantConfig = {
   sidebarBackground: false,
   sidebarBackgroundColor: "beige",
+  sidebarBackgroundType: "panel",
   backgroundPattern: false,
   backgroundPatternPlacement: "all",
   extendedPreferences: false,
@@ -47,30 +55,24 @@ const SIDEBAR_COLOR_OPTIONS: SelectOption[] = [
   { value: "white", label: "White" },
 ];
 
+const SIDEBAR_TYPE_OPTIONS: SelectOption[] = [
+  { value: "panel", label: "Floating panel" },
+  { value: "sidebar", label: "Sidebar" },
+];
+
 const PATTERN_PLACEMENT_OPTIONS: SelectOption[] = [
   { value: "all", label: "All screens" },
   { value: "new-chat", label: "New chat only" },
 ];
 
 /**
- * Stakeholder-only preview panel (not product UI) — floats in the bottom-right
- * corner of the AI Assistant and flips the page between visual variants live.
- * Collapsible to a lone sliders button. Add an axis by extending
- * `AssistantConfig` + `TOGGLES` and handling the flag where the page branches.
+ * Floating stakeholder-panel chrome (bottom-right, collapsible to a lone
+ * sliders button) shared by the product configurators — the AI Assistant's
+ * multi-axis panel and District Pass's navigation switch. Renders `children`
+ * as the panel body (inside the `px-3 py-3` column).
  */
-export function Configurator({
-  config,
-  onChange,
-}: {
-  config: AssistantConfig;
-  onChange: (config: AssistantConfig) => void;
-}) {
+export function ConfiguratorShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(true);
-
-  const set = <K extends keyof AssistantConfig>(
-    key: K,
-    value: AssistantConfig[K],
-  ) => onChange({ ...config, [key]: value });
 
   return (
     <div className="fixed right-4 bottom-4 z-40">
@@ -100,83 +102,7 @@ export function Configurator({
               </button>
             </div>
 
-            <div className="flex flex-col px-3 py-3">
-              {TOGGLES.map((toggle, index) => (
-                <React.Fragment key={toggle.key}>
-                  {/* Full-width divider between groups (breaks out of the px-3). */}
-                  {index > 0 && (
-                    <div
-                      aria-hidden="true"
-                      className="border-card-border -mx-3 my-3 border-t"
-                    />
-                  )}
-
-                  {/* One settings group: the toggle + any sub-options. */}
-                  <div className="flex flex-col gap-3">
-                    <label className="flex cursor-pointer items-center justify-between gap-4">
-                      <span className="body-03 text-card-foreground">
-                        {toggle.label}
-                      </span>
-                      <Switch
-                        checked={config[toggle.key]}
-                        onCheckedChange={(value) => set(toggle.key, value)}
-                        aria-label={toggle.label}
-                      />
-                    </label>
-
-                    {/* Sidebar-colour sub-option, shown only while the toggle is on. */}
-                    {toggle.key === "sidebarBackground" &&
-                      config.sidebarBackground && (
-                        <div className="flex items-center justify-between gap-4 pl-3">
-                          <span className="body-03 text-card-foreground-muted">
-                            Color
-                          </span>
-                          <RightAlignedInlineSelect
-                            options={SIDEBAR_COLOR_OPTIONS}
-                            value={config.sidebarBackgroundColor}
-                            onValueChange={(value) =>
-                              set(
-                                "sidebarBackgroundColor",
-                                value as SidebarBackgroundColor,
-                              )
-                            }
-                            aria-label="Sidebar background color"
-                          />
-                        </div>
-                      )}
-
-                    {/* What the axis did — shown only while the toggle is on. */}
-                    {toggle.key === "extendedPreferences" &&
-                      config.extendedPreferences && (
-                        <p className="body-04 text-card-foreground-muted">
-                          Memory in the sidebar is replaced by Preferences.
-                        </p>
-                      )}
-
-                    {/* Pattern-placement sub-option, shown only while the toggle is on. */}
-                    {toggle.key === "backgroundPattern" &&
-                      config.backgroundPattern && (
-                        <div className="flex items-center justify-between gap-4 pl-3">
-                          <span className="body-03 text-card-foreground-muted">
-                            Placement
-                          </span>
-                          <RightAlignedInlineSelect
-                            options={PATTERN_PLACEMENT_OPTIONS}
-                            value={config.backgroundPatternPlacement}
-                            onValueChange={(value) =>
-                              set(
-                                "backgroundPatternPlacement",
-                                value as BackgroundPatternPlacement,
-                              )
-                            }
-                            aria-label="Background pattern placement"
-                          />
-                        </div>
-                      )}
-                  </div>
-                </React.Fragment>
-              ))}
-            </div>
+            <div className="flex flex-col px-3 py-3">{children}</div>
           </motion.div>
         ) : (
           <motion.button
@@ -196,5 +122,120 @@ export function Configurator({
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+/**
+ * Stakeholder-only preview panel (not product UI) — floats in the bottom-right
+ * corner of the AI Assistant and flips the page between visual variants live.
+ * Add an axis by extending `AssistantConfig` + `TOGGLES` and handling the flag
+ * where the page branches.
+ */
+export function Configurator({
+  config,
+  onChange,
+}: {
+  config: AssistantConfig;
+  onChange: (config: AssistantConfig) => void;
+}) {
+  const set = <K extends keyof AssistantConfig>(
+    key: K,
+    value: AssistantConfig[K],
+  ) => onChange({ ...config, [key]: value });
+
+  return (
+    <ConfiguratorShell>
+      {TOGGLES.map((toggle, index) => (
+        <React.Fragment key={toggle.key}>
+          {/* Full-width divider between groups (breaks out of the px-3). */}
+          {index > 0 && (
+            <div
+              aria-hidden="true"
+              className="border-card-border -mx-3 my-3 border-t"
+            />
+          )}
+
+          {/* One settings group: the toggle + any sub-options. */}
+          <div className="flex flex-col gap-3">
+            <label className="flex cursor-pointer items-center justify-between gap-4">
+              <span className="body-03 text-card-foreground">
+                {toggle.label}
+              </span>
+              <Switch
+                checked={config[toggle.key]}
+                onCheckedChange={(value) => set(toggle.key, value)}
+                aria-label={toggle.label}
+              />
+            </label>
+
+            {/* Sidebar sub-options (type + colour), shown while the toggle is on. */}
+            {toggle.key === "sidebarBackground" && config.sidebarBackground && (
+              <>
+                <div className="flex items-center justify-between gap-4 pl-3">
+                  <span className="body-03 text-card-foreground-muted">
+                    Type
+                  </span>
+                  <RightAlignedInlineSelect
+                    options={SIDEBAR_TYPE_OPTIONS}
+                    value={config.sidebarBackgroundType}
+                    onValueChange={(value) =>
+                      set(
+                        "sidebarBackgroundType",
+                        value as SidebarBackgroundType,
+                      )
+                    }
+                    aria-label="Sidebar background type"
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-4 pl-3">
+                  <span className="body-03 text-card-foreground-muted">
+                    Color
+                  </span>
+                  <RightAlignedInlineSelect
+                    options={SIDEBAR_COLOR_OPTIONS}
+                    value={config.sidebarBackgroundColor}
+                    onValueChange={(value) =>
+                      set(
+                        "sidebarBackgroundColor",
+                        value as SidebarBackgroundColor,
+                      )
+                    }
+                    aria-label="Sidebar background color"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* What the axis did — shown only while the toggle is on. */}
+            {toggle.key === "extendedPreferences" &&
+              config.extendedPreferences && (
+                <p className="body-04 text-card-foreground-muted">
+                  Memory in the sidebar is replaced by Preferences.
+                </p>
+              )}
+
+            {/* Pattern-placement sub-option, shown only while the toggle is on. */}
+            {toggle.key === "backgroundPattern" && config.backgroundPattern && (
+              <div className="flex items-center justify-between gap-4 pl-3">
+                <span className="body-03 text-card-foreground-muted">
+                  Placement
+                </span>
+                <RightAlignedInlineSelect
+                  options={PATTERN_PLACEMENT_OPTIONS}
+                  value={config.backgroundPatternPlacement}
+                  onValueChange={(value) =>
+                    set(
+                      "backgroundPatternPlacement",
+                      value as BackgroundPatternPlacement,
+                    )
+                  }
+                  aria-label="Background pattern placement"
+                />
+              </div>
+            )}
+          </div>
+        </React.Fragment>
+      ))}
+    </ConfiguratorShell>
   );
 }

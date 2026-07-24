@@ -17,7 +17,8 @@ export function LaunchpadHeader({
   hasPaidPlan = false,
 }: LaunchpadHeaderProps) {
   return (
-    <header className="z-10 flex w-full shrink-0 items-center justify-between p-4">
+    // Glass chrome (Figma 474:143342) — overlay + translucent blur, same as ProductHeader.
+    <header className="bg-surface/[80%] absolute inset-x-0 top-0 z-30 flex w-full items-center justify-between p-4 backdrop-blur-md">
       <div className="flex w-72 items-center">
         <img
           src={wordmarkUrl}

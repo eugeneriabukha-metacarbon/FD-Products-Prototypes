@@ -1,17 +1,18 @@
 import * as React from "react";
 import { WarningIcon } from "@phosphor-icons/react";
 import { Button } from "@financedistrict/apps-ui/button";
+import { FeatureCard } from "@financedistrict/apps-ui/feature-card";
 import { Input } from "@financedistrict/apps-ui/input";
 import { Dialog } from "@financedistrict/apps-ui/dialog";
 
 /**
- * Account-deletion row at the bottom of the Security tab: a muted description
- * on the left and a destructive "Delete account" button on the right (no
- * bordered box, no heading — per Figma 549:43866). The button opens a
- * confirmation `Dialog` that requires the user to enter their password before
- * the destructive confirm button enables. Deletion is simulated: confirming
- * just closes the dialog and calls `onDeleted` (the parent shows a toast) —
- * no routing, no real deletion.
+ * Account-deletion row in the Security section — a FeatureCard matching the
+ * sibling Password row (Warning leading icon, permanence copy as the subtitle)
+ * with a destructive "Delete account" button in the trailing slot. The button
+ * opens a confirmation `Dialog` that requires the user to enter their password
+ * before the destructive confirm button enables. Deletion is simulated:
+ * confirming just closes the dialog and calls `onDeleted` (the parent shows a
+ * toast) — no routing, no real deletion.
  */
 export function DangerZone({
   onDeleted,
@@ -43,22 +44,25 @@ export function DangerZone({
 
   return (
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
-      <div className="flex items-center justify-between gap-4">
-        <p className="body-03 text-primary-foreground-muted">
-          Deleting your District Pass is permanent and cannot be undone.
-        </p>
-        <Dialog.Trigger asChild>
-          <Button
-            variation="destructive"
-            size="sm"
-            type="button"
-            disabled={disabled}
-            className="shrink-0 whitespace-nowrap"
-          >
-            Delete account
-          </Button>
-        </Dialog.Trigger>
-      </div>
+      <FeatureCard
+        title="Delete account"
+        subtitle="Deleting your District Pass is permanent and cannot be undone."
+        caret={false}
+        leading={<WarningIcon />}
+        trailing={
+          <Dialog.Trigger asChild>
+            <Button
+              variation="destructive"
+              size="sm"
+              type="button"
+              disabled={disabled}
+              className="shrink-0 whitespace-nowrap"
+            >
+              Delete account
+            </Button>
+          </Dialog.Trigger>
+        }
+      />
       <Dialog.Content>
             <Dialog.Header
               icon={<WarningIcon weight="fill" />}

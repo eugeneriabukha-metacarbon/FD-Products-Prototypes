@@ -31,8 +31,8 @@ export function MemoryScreen({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="bg-surface flex h-screen flex-col overflow-y-auto">
-      {/* header — Paywall chrome */}
-      <header className="relative flex w-full shrink-0 items-center justify-between px-4 py-5">
+      {/* header — Paywall chrome, glass (sticky + translucent blur) */}
+      <header className="bg-surface/[80%] sticky top-0 z-30 flex w-full shrink-0 items-center justify-between px-4 py-5 backdrop-blur-md">
         <div className="flex w-72 items-center gap-4">
           <div className="flex items-center gap-[7px]">
             <span className="flex size-6 items-center justify-center">
